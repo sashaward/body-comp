@@ -84,17 +84,17 @@ export default function Dashboard() {
 
   if (isLoading) {
     return (
-      <div className="min-h-screen bg-[var(--bg-primary)] flex items-center justify-center">
-        <div className="w-8 h-8 border-2 border-[#1A1A1A] border-t-transparent rounded-full animate-spin" />
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="w-8 h-8 border-2 border-[var(--text-primary)] border-t-transparent rounded-full animate-spin" />
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-[var(--bg-primary)] p-4 sm:p-8">
+    <div className="min-h-screen p-4 sm:p-8">
       <div className="max-w-6xl mx-auto">
-        {/* Unified card container */}
-        <div className="bg-white rounded-[var(--radius-card)] shadow-sm border border-[var(--border-color)] p-6 sm:p-8 space-y-6 opacity-0 animate-fade-in">
+        {/* Unified card container - frosted glass */}
+        <div className="rounded-[var(--radius-card)] p-6 sm:p-8 space-y-6 opacity-0 animate-fade-in glass">
           {/* Header */}
           <Header onLogWeighIn={() => setIsModalOpen(true)} />
 

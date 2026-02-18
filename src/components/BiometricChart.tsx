@@ -27,13 +27,13 @@ const metrics: Record<
   MetricKey,
   { label: string; color: string; unit: string }
 > = {
-  weight: { label: "Weight", color: "#5856D6", unit: "kg" },
-  muscle: { label: "Skeletal Muscle", color: "#007AFF", unit: "kg" },
-  fatMass: { label: "Body Fat Mass", color: "#FF9500", unit: "kg" },
-  fatPercent: { label: "Body Fat %", color: "#34C759", unit: "%" },
+  weight: { label: "Weight", color: "#6366F1", unit: "kg" },
+  muscle: { label: "Skeletal Muscle", color: "#0891B2", unit: "kg" },
+  fatMass: { label: "Body Fat Mass", color: "#EA580C", unit: "kg" },
+  fatPercent: { label: "Body Fat %", color: "#059669", unit: "%" },
 };
 
-const otherMassColor = "#E5E5EA";
+const otherMassColor = "#94A3B8";
 
 const timeRanges: Record<TimeRange, { label: string; days: number | null }> = {
   "3m": { label: "3M", days: 90 },
@@ -114,8 +114,8 @@ export default function BiometricChart({
     const showBars = showMuscle || showFatMass;
 
     return (
-      <div className="bg-white rounded-lg shadow-lg border border-gray-200 p-3 min-w-[160px]">
-        <p className="text-xs font-medium text-gray-500 mb-2 pb-2 border-b border-gray-100">
+      <div className="bg-white/75 backdrop-blur-xl rounded-lg shadow-[0_8px_32px_rgba(0,0,0,0.08)] border border-white/50 p-3 min-w-[160px]">
+        <p className="text-xs font-medium text-[var(--text-secondary)] mb-2 pb-2 border-b border-white/40">
           {format(parseISO(data.date), "MMMM d, yyyy")}
         </p>
         <div className="space-y-1.5">
@@ -123,9 +123,9 @@ export default function BiometricChart({
             <div className="flex items-center justify-between gap-4">
               <div className="flex items-center gap-2">
                 <div className="w-2 h-2 rounded-full" style={{ backgroundColor: metrics.weight.color }} />
-                <span className="text-xs text-gray-600">{metrics.weight.label}</span>
+                <span className="text-xs text-[var(--text-secondary)]">{metrics.weight.label}</span>
               </div>
-              <span className="text-xs font-semibold text-gray-900">
+              <span className="text-xs font-semibold text-[var(--text-primary)]">
                 {data.weight.toFixed(1)} kg
               </span>
             </div>
@@ -134,9 +134,9 @@ export default function BiometricChart({
             <div className="flex items-center justify-between gap-4">
               <div className="flex items-center gap-2">
                 <div className="w-2 h-2 rounded-full" style={{ backgroundColor: metrics.muscle.color }} />
-                <span className="text-xs text-gray-600">{metrics.muscle.label}</span>
+                <span className="text-xs text-[var(--text-secondary)]">{metrics.muscle.label}</span>
               </div>
-              <span className="text-xs font-semibold text-gray-900">
+              <span className="text-xs font-semibold text-[var(--text-primary)]">
                 {data.muscle.toFixed(1)} kg
               </span>
             </div>
@@ -145,9 +145,9 @@ export default function BiometricChart({
             <div className="flex items-center justify-between gap-4">
               <div className="flex items-center gap-2">
                 <div className="w-2 h-2 rounded-full" style={{ backgroundColor: metrics.fatMass.color }} />
-                <span className="text-xs text-gray-600">{metrics.fatMass.label}</span>
+                <span className="text-xs text-[var(--text-secondary)]">{metrics.fatMass.label}</span>
               </div>
-              <span className="text-xs font-semibold text-gray-900">
+              <span className="text-xs font-semibold text-[var(--text-primary)]">
                 {data.fatMass.toFixed(1)} kg
               </span>
             </div>
@@ -156,9 +156,9 @@ export default function BiometricChart({
             <div className="flex items-center justify-between gap-4">
               <div className="flex items-center gap-2">
                 <div className="w-2 h-2 rounded-full" style={{ backgroundColor: otherMassColor }} />
-                <span className="text-xs text-gray-600">Other</span>
+                <span className="text-xs text-[var(--text-secondary)]">Other</span>
               </div>
-              <span className="text-xs font-semibold text-gray-900">
+              <span className="text-xs font-semibold text-[var(--text-primary)]">
                 {data.other.toFixed(1)} kg
               </span>
             </div>
@@ -167,9 +167,9 @@ export default function BiometricChart({
             <div className="flex items-center justify-between gap-4">
               <div className="flex items-center gap-2">
                 <div className="w-2 h-2 rounded-full" style={{ backgroundColor: metrics.fatPercent.color }} />
-                <span className="text-xs text-gray-600">{metrics.fatPercent.label}</span>
+                <span className="text-xs text-[var(--text-secondary)]">{metrics.fatPercent.label}</span>
               </div>
-              <span className="text-xs font-semibold text-gray-900">
+              <span className="text-xs font-semibold text-[var(--text-primary)]">
                 {data.fatPercent.toFixed(1)}%
               </span>
             </div>
@@ -187,10 +187,10 @@ export default function BiometricChart({
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-6">
         <div>
-          <h2 className="text-lg font-semibold text-gray-900">
+          <h2 className="text-lg font-semibold text-[var(--text-primary)]">
             Biometric Progress
           </h2>
-          <p className="text-xs text-gray-500 font-normal uppercase tracking-wider mt-0.5">
+          <p className="text-xs text-[var(--text-secondary)] font-normal uppercase tracking-wider mt-0.5">
             Historical Performance Tracking
           </p>
         </div>
@@ -205,8 +205,8 @@ export default function BiometricChart({
               onClick={() => setTimeRange(range)}
               className={`px-4 py-2 rounded-full text-xs font-bold transition-all ${
                 isSelected
-                  ? "bg-[#F3F4F6] text-[#1A1A1A] border-transparent"
-                  : "bg-white border border-[#E5E7EB] text-[#6B7280] hover:bg-gray-50"
+                  ? "bg-white/60 backdrop-blur-md text-[var(--text-primary)] border border-white/50 shadow-sm"
+                  : "bg-white/35 backdrop-blur-sm border border-white/40 text-[var(--text-secondary)] hover:bg-white/50 hover:border-white/50"
               }`}
             >
               {timeRanges[range].label}
@@ -227,19 +227,19 @@ export default function BiometricChart({
             >
               <CartesianGrid
                 strokeDasharray="3 3"
-                stroke="#f0f0f0"
+                stroke="#F1F5F9"
                 vertical={false}
               />
               <XAxis
                 dataKey="formattedDate"
-                tick={{ fontSize: 11, fill: "#9ca3af" }}
+                tick={{ fontSize: 11, fill: "#64748B" }}
                 tickLine={false}
-                axisLine={{ stroke: "#e5e7eb" }}
+                axisLine={{ stroke: "#E2E8F0" }}
                 dy={10}
               />
               <YAxis
                 yAxisId="left"
-                tick={{ fontSize: 11, fill: "#9ca3af" }}
+                tick={{ fontSize: 11, fill: "#64748B" }}
                 tickLine={false}
                 axisLine={false}
                 domain={[0, 'auto']}
@@ -247,7 +247,7 @@ export default function BiometricChart({
                   value: 'kg', 
                   angle: -90, 
                   position: 'insideLeft',
-                  style: { fontSize: 11, fill: '#9ca3af' }
+                  style: { fontSize: 11, fill: '#64748B' }
                 }}
               />
               {showFatPercentLine && (
@@ -340,9 +340,9 @@ export default function BiometricChart({
         </div>
       ) : (
         <div className="h-80 flex items-center justify-center">
-          <div className="text-center">
-            <p className="text-gray-400 text-sm">No data to display</p>
-            <p className="text-gray-300 text-xs mt-1">
+          <div className="text-center bg-white/40 backdrop-blur-sm rounded-[var(--radius-metric)] px-8 py-6 border border-white/40">
+            <p className="text-[var(--text-muted)] text-sm">No data to display</p>
+            <p className="text-[var(--text-muted)] text-xs mt-1 opacity-80">
               Log your first weigh-in to see progress
             </p>
           </div>

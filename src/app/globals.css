@@ -5,37 +5,54 @@
   --bg-primary: #F8F9FA;
   --bg-card: #ffffff;
   --bg-modal-overlay: rgba(0, 0, 0, 0.4);
+
+  /* Glass aesthetic (glassmorphism) */
+  --glass-bg: rgba(255, 255, 255, 0.65);
+  --glass-bg-elevated: rgba(255, 255, 255, 0.8);
+  --glass-border: rgba(255, 255, 255, 0.5);
+  --glass-shadow: 0 8px 32px rgba(0, 0, 0, 0.06);
+  --glass-blur: 16px;
+  --glass-active: rgba(255, 255, 255, 0.5);
   
-  /* Text colors */
-  --text-primary: #1A1A1A;
-  --text-secondary: #6B7280;
-  --text-muted: #8E8E93;
-  --text-metric-label: #545456;
+  /* Text colors - modern slate */
+  --text-primary: #0F172A;
+  --text-secondary: #475569;
+  --text-muted: #64748B;
+  --text-metric-label: #475569;
   
-  /* Accent colors from design */
-  --color-weight: #5856D6;
-  --color-muscle: #007AFF;
-  --color-fat-mass: #FF9500;
-  --color-fat-percent: #34C759;
+  /* Accent colors - refined, cohesive */
+  --color-weight: #6366F1;
+  --color-muscle: #0891B2;
+  --color-fat-mass: #EA580C;
+  --color-fat-percent: #059669;
   
   /* Chart colors */
-  --chart-weight: #5856D6;
-  --chart-muscle: #007AFF;
-  --chart-fat-mass: #FF9500;
-  --chart-fat-percent: #34C759;
+  --chart-weight: #6366F1;
+  --chart-muscle: #0891B2;
+  --chart-fat-mass: #EA580C;
+  --chart-fat-percent: #059669;
   
   /* UI colors */
-  --border-color: #EFEFF4;
-  --shadow-card: 0 1px 3px rgba(0, 0, 0, 0.05), 0 1px 2px rgba(0, 0, 0, 0.03);
+  --border-color: #E2E8F0;
+  --shadow-card: 0 1px 3px rgba(15, 23, 42, 0.04), 0 1px 2px rgba(15, 23, 42, 0.02);
   
   /* Delta colors */
-  --delta-positive: #34C759;
-  --delta-negative: #FF3B30;
+  --delta-positive: #059669;
+  --delta-negative: #DC2626;
   
   /* Border radii */
   --radius-card: 20px;
   --radius-metric: 14px;
   --radius-button: 9px;
+}
+
+/* Glass utility */
+.glass {
+  background: var(--glass-bg);
+  backdrop-filter: blur(var(--glass-blur));
+  -webkit-backdrop-filter: blur(var(--glass-blur));
+  border: 1px solid var(--glass-border);
+  box-shadow: var(--glass-shadow);
 }
 
 @theme inline {
@@ -44,7 +61,8 @@
 }
 
 body {
-  background: var(--bg-primary);
+  background: linear-gradient(135deg, #F8FAFC 0%, #F1F5F9 50%, #E2E8F0 100%);
+  background-attachment: fixed;
   color: var(--text-primary);
   font-family: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, 'Noto Sans', sans-serif;
   -webkit-font-smoothing: antialiased;
@@ -62,12 +80,12 @@ body {
 }
 
 ::-webkit-scrollbar-thumb {
-  background: #d4d4d8;
+  background: #94A3B8;
   border-radius: 3px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: #a1a1aa;
+  background: #64748B;
 }
 
 /* Input styling */
