@@ -42,8 +42,19 @@ Open [http://localhost:3000](http://localhost:3000) in your browser.
 
 ```bash
 npm run build
-npm start
 ```
+
+The static site is output to the `out/` directory. Serve it with any static file server.
+
+## Deploy to GitHub Pages
+
+1. **Enable GitHub Pages** in your repo: Settings → Pages → Build and deployment → Source: **GitHub Actions**.
+
+2. **Push to `main`** – the workflow deploys automatically, or run it manually from the Actions tab.
+
+3. **Your site** will be live at `https://<username>.github.io/body-comp/`.
+
+Data is stored in your browser’s `localStorage`; nothing is sent to a server. No login required.
 
 ## Project Structure
 
@@ -87,22 +98,6 @@ Each entry contains:
   "createdAt": "2024-02-16T10:30:00.000Z"
 }
 ```
-
-## Deployment
-
-### Static Export
-
-This app can be deployed as a static site:
-
-```bash
-npm run build
-```
-
-Deploy the `.next` folder to any static hosting:
-- Vercel
-- Netlify
-- GitHub Pages
-- Cloudflare Pages
 
 ## License
 
