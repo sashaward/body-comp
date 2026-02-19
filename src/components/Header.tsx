@@ -23,7 +23,7 @@ export default function Header({ onLogWeighIn }: HeaderProps) {
       
       <button
         onClick={onLogWeighIn}
-        className="flex items-center gap-2 bg-black text-white px-5 py-2.5 rounded-[var(--radius-button)] font-semibold text-sm uppercase tracking-wide hover:bg-[#1E293B] transition-colors shadow-[0_4px_20px_rgba(0,0,0,0.12)]"
+        className="flex items-center gap-2 bg-[var(--color-weight)] text-[#121212] px-5 py-2.5 rounded-[var(--radius-button)] font-semibold text-sm uppercase tracking-wide hover:brightness-110 transition-all shadow-[0_4px_24px_rgba(255,214,10,0.25)]"
       >
         Log Weigh-In
       </button>

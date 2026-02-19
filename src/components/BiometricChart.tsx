@@ -27,13 +27,13 @@ const metrics: Record<
   MetricKey,
   { label: string; color: string; unit: string }
 > = {
-  weight: { label: "Weight", color: "#6366F1", unit: "kg" },
-  muscle: { label: "Skeletal Muscle", color: "#0891B2", unit: "kg" },
-  fatMass: { label: "Body Fat Mass", color: "#EA580C", unit: "kg" },
-  fatPercent: { label: "Body Fat %", color: "#059669", unit: "%" },
+  weight: { label: "Weight", color: "#FFD60A", unit: "kg" },
+  muscle: { label: "Skeletal Muscle", color: "#A855F7", unit: "kg" },
+  fatMass: { label: "Body Fat Mass", color: "#40E0D0", unit: "kg" },
+  fatPercent: { label: "Body Fat %", color: "#5DD39E", unit: "%" },
 };
 
-const otherMassColor = "#94A3B8";
+const otherMassColor = "#6B6B6B";
 
 const timeRanges: Record<TimeRange, { label: string; days: number | null }> = {
   "3m": { label: "3M", days: 90 },
@@ -114,8 +114,8 @@ export default function BiometricChart({
     const showBars = showMuscle || showFatMass;
 
     return (
-      <div className="bg-white/75 backdrop-blur-xl rounded-lg shadow-[0_8px_32px_rgba(0,0,0,0.08)] border border-white/50 p-3 min-w-[160px]">
-        <p className="text-xs font-medium text-[var(--text-secondary)] mb-2 pb-2 border-b border-white/40">
+      <div className="bg-[var(--bg-elevated)] backdrop-blur-xl rounded-[var(--radius-metric)] shadow-[0_8px_32px_rgba(0,0,0,0.4)] border border-white/[0.08] p-3 min-w-[160px]">
+        <p className="text-xs font-medium text-[var(--text-secondary)] mb-2 pb-2 border-b border-white/10">
           {format(parseISO(data.date), "MMMM d, yyyy")}
         </p>
         <div className="space-y-1.5">
@@ -152,17 +152,6 @@ export default function BiometricChart({
               </span>
             </div>
           )}
-          {showBars && (
-            <div className="flex items-center justify-between gap-4">
-              <div className="flex items-center gap-2">
-                <div className="w-2 h-2 rounded-full" style={{ backgroundColor: otherMassColor }} />
-                <span className="text-xs text-[var(--text-secondary)]">Other</span>
-              </div>
-              <span className="text-xs font-semibold text-[var(--text-primary)]">
-                {data.other.toFixed(1)} kg
-              </span>
-            </div>
-          )}
           {showFatPercent && (
             <div className="flex items-center justify-between gap-4">
               <div className="flex items-center gap-2">
@@ -171,6 +160,17 @@ export default function BiometricChart({
               </div>
               <span className="text-xs font-semibold text-[var(--text-primary)]">
                 {data.fatPercent.toFixed(1)}%
+              </span>
+            </div>
+          )}
+          {showBars && (
+            <div className="flex items-center justify-between gap-4">
+              <div className="flex items-center gap-2">
+                <div className="w-2 h-2 rounded-full" style={{ backgroundColor: otherMassColor }} />
+                <span className="text-xs text-[var(--text-secondary)]">Other Mass</span>
+              </div>
+              <span className="text-xs font-semibold text-[var(--text-primary)]">
+                {data.other.toFixed(1)} kg
               </span>
             </div>
           )}
@@ -205,8 +205,8 @@ export default function BiometricChart({
               onClick={() => setTimeRange(range)}
               className={`px-4 py-2 rounded-full text-xs font-bold transition-all ${
                 isSelected
-                  ? "bg-white/60 backdrop-blur-md text-[var(--text-primary)] border border-white/50 shadow-sm"
-                  : "bg-white/35 backdrop-blur-sm border border-white/40 text-[var(--text-secondary)] hover:bg-white/50 hover:border-white/50"
+                  ? "bg-[var(--glass-active-bg)] text-[var(--text-primary)] border border-white/10 shadow-[0_2px_12px_rgba(0,0,0,0.2)]"
+                  : "bg-transparent text-[var(--text-secondary)] hover:bg-white/5 hover:border hover:border-white/5"
               }`}
             >
               {timeRanges[range].label}
@@ -227,19 +227,19 @@ export default function BiometricChart({
             >
               <CartesianGrid
                 strokeDasharray="3 3"
-                stroke="#F1F5F9"
+                stroke="rgba(255,255,255,0.08)"
                 vertical={false}
               />
               <XAxis
                 dataKey="formattedDate"
-                tick={{ fontSize: 11, fill: "#64748B" }}
+                tick={{ fontSize: 11, fill: "#A0A0A0" }}
                 tickLine={false}
-                axisLine={{ stroke: "#E2E8F0" }}
+                axisLine={{ stroke: "rgba(255,255,255,0.1)" }}
                 dy={10}
               />
               <YAxis
                 yAxisId="left"
-                tick={{ fontSize: 11, fill: "#64748B" }}
+                tick={{ fontSize: 11, fill: "#A0A0A0" }}
                 tickLine={false}
                 axisLine={false}
                 domain={[0, 'auto']}
@@ -247,7 +247,7 @@ export default function BiometricChart({
                   value: 'kg', 
                   angle: -90, 
                   position: 'insideLeft',
-                  style: { fontSize: 11, fill: '#64748B' }
+                  style: { fontSize: 11, fill: '#A0A0A0' }
                 }}
               />
               {showFatPercentLine && (
@@ -269,38 +269,40 @@ export default function BiometricChart({
               )}
               <Tooltip content={<CustomTooltip />} />
 
-              {/* Stacked bars for muscle, fat mass, and other */}
+              {/* Stacked bars: each bar only renders when its metric is active */}
+              {activeMetrics.includes("muscle") && (
+                <Bar
+                  yAxisId="left"
+                  dataKey="muscle"
+                  stackId="composition"
+                  fill={metrics.muscle.color}
+                  radius={[0, 0, 0, 0]}
+                  isAnimationActive
+                  animationDuration={800}
+                />
+              )}
+              {activeMetrics.includes("fatMass") && (
+                <Bar
+                  yAxisId="left"
+                  dataKey="fatMass"
+                  stackId="composition"
+                  fill={metrics.fatMass.color}
+                  radius={[0, 0, 0, 0]}
+                  isAnimationActive
+                  animationDuration={800}
+                />
+              )}
               {(activeMetrics.includes("muscle") || activeMetrics.includes("fatMass")) && (
-                <>
-                  <Bar
-                    yAxisId="left"
-                    dataKey="muscle"
-                    stackId="composition"
-                    fill={metrics.muscle.color}
-                    radius={[0, 0, 0, 0]}
-                    isAnimationActive
-                    animationDuration={800}
-                  />
-                  <Bar
-                    yAxisId="left"
-                    dataKey="fatMass"
-                    stackId="composition"
-                    fill={metrics.fatMass.color}
-                    radius={[0, 0, 0, 0]}
-                    isAnimationActive
-                    animationDuration={800}
-                  />
-                  <Bar
-                    yAxisId="left"
-                    dataKey="other"
-                    stackId="composition"
-                    fill={otherMassColor}
-                    radius={[4, 4, 0, 0]}
-                    isAnimationActive
-                    animationDuration={800}
-                    tooltipType="none"
-                  />
-                </>
+                <Bar
+                  yAxisId="left"
+                  dataKey="other"
+                  stackId="composition"
+                  fill={otherMassColor}
+                  radius={[4, 4, 0, 0]}
+                  isAnimationActive
+                  animationDuration={800}
+                  tooltipType="none"
+                />
               )}
 
               {/* Weight as line overlay */}
@@ -311,8 +313,8 @@ export default function BiometricChart({
                   dataKey="weight"
                   stroke={metrics.weight.color}
                   strokeWidth={2.5}
-                  dot={{ fill: metrics.weight.color, r: 4, strokeWidth: 2, stroke: "white" }}
-                  activeDot={{ r: 6, strokeWidth: 2, stroke: "white" }}
+                  dot={{ fill: metrics.weight.color, r: 4, strokeWidth: 2, stroke: "#1E1E1E" }}
+                  activeDot={{ r: 6, strokeWidth: 2, stroke: "#1E1E1E" }}
                   isAnimationActive
                   animationDuration={1200}
                   animationEasing="ease-out"
@@ -328,8 +330,8 @@ export default function BiometricChart({
                   stroke={metrics.fatPercent.color}
                   strokeWidth={2.5}
                   strokeDasharray="5 5"
-                  dot={{ fill: metrics.fatPercent.color, r: 4, strokeWidth: 2, stroke: "white" }}
-                  activeDot={{ r: 6, strokeWidth: 2, stroke: "white" }}
+                  dot={{ fill: metrics.fatPercent.color, r: 4, strokeWidth: 2, stroke: "#1E1E1E" }}
+                  activeDot={{ r: 6, strokeWidth: 2, stroke: "#1E1E1E" }}
                   isAnimationActive
                   animationDuration={1200}
                   animationEasing="ease-out"
@@ -340,7 +342,7 @@ export default function BiometricChart({
         </div>
       ) : (
         <div className="h-80 flex items-center justify-center">
-          <div className="text-center bg-white/40 backdrop-blur-sm rounded-[var(--radius-metric)] px-8 py-6 border border-white/40">
+          <div className="text-center bg-[var(--bg-elevated)] rounded-[var(--radius-metric)] px-8 py-6 border border-white/[0.08]">
             <p className="text-[var(--text-muted)] text-sm">No data to display</p>
             <p className="text-[var(--text-muted)] text-xs mt-1 opacity-80">
               Log your first weigh-in to see progress

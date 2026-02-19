@@ -20,10 +20,16 @@ export default function Dashboard() {
     "fatPercent",
   ]);
 
+  const allMetrics: MetricKey[] = ["weight", "muscle", "fatMass", "fatPercent"];
+
   const toggleMetric = (metric: MetricKey) => {
-    setActiveMetrics((prev) =>
-      prev.includes(metric) ? prev.filter((m) => m !== metric) : [...prev, metric]
-    );
+    setActiveMetrics((prev) => {
+      const isSoleActive = prev.length === 1 && prev.includes(metric);
+      if (isSoleActive) {
+        return allMetrics;
+      }
+      return [metric];
+    });
   };
 
   const fetchEntries = useCallback(() => {
@@ -84,17 +90,17 @@ export default function Dashboard() {
 
   if (isLoading) {
     return (
-      <div className="min-h-screen flex items-center justify-center">
-        <div className="w-8 h-8 border-2 border-[var(--text-primary)] border-t-transparent rounded-full animate-spin" />
+      <div className="min-h-screen flex items-center justify-center bg-[var(--bg-primary)]">
+        <div className="w-8 h-8 border-2 border-[var(--color-weight)] border-t-transparent rounded-full animate-spin" />
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen p-4 sm:p-8">
+    <div className="min-h-screen p-4 sm:p-8 bg-[var(--bg-primary)]">
       <div className="max-w-6xl mx-auto">
         {/* Unified card container - frosted glass */}
-        <div className="rounded-[var(--radius-card)] p-6 sm:p-8 space-y-6 opacity-0 animate-fade-in glass">
+        <div className="rounded-[var(--radius-card)] p-6 sm:p-8 space-y-6 opacity-0 animate-fade-in bg-[var(--bg-card)] border border-white/[0.06] shadow-[var(--shadow-card)]">
           {/* Header */}
           <Header onLogWeighIn={() => setIsModalOpen(true)} />
 
@@ -156,11 +162,16 @@ export default function Dashboard() {
         {/* Footer */}
         <footer className="flex items-center justify-between py-4 text-xs text-[var(--text-secondary)] mt-6">
           <span className="uppercase tracking-wider font-normal">
-            Created by Sasha
+            stored locally
           </span>
-          <span className="uppercase tracking-wider font-normal">
-            Weight Tracker
-          </span>
+          <a
+            href="https://sashaward.me"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="uppercase tracking-wider font-normal hover:text-[var(--text-primary)] transition-colors"
+          >
+            leave feedback
+          </a>
         </footer>
       </div>
 

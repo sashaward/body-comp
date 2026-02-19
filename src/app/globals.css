@@ -1,52 +1,53 @@
 @import "tailwindcss";
 
 :root {
-  /* Background colors */
-  --bg-primary: #F8F9FA;
-  --bg-card: #ffffff;
-  --bg-modal-overlay: rgba(0, 0, 0, 0.4);
+  /* Dark theme - activity tracker aesthetic */
+  --bg-primary: #121212;
+  --bg-card: #1E1E1E;
+  --bg-elevated: #252525;
+  --bg-modal-overlay: rgba(0, 0, 0, 0.7);
 
-  /* Glass aesthetic (glassmorphism) */
-  --glass-bg: rgba(255, 255, 255, 0.65);
-  --glass-bg-elevated: rgba(255, 255, 255, 0.8);
-  --glass-border: rgba(255, 255, 255, 0.5);
-  --glass-shadow: 0 8px 32px rgba(0, 0, 0, 0.06);
-  --glass-blur: 16px;
-  --glass-active: rgba(255, 255, 255, 0.5);
+  /* Glass - dark translucent */
+  --glass-bg: rgba(37, 37, 37, 0.8);
+  --glass-bg-elevated: rgba(45, 45, 45, 0.9);
+  --glass-border: rgba(255, 255, 255, 0.08);
+  --glass-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
+  --glass-blur: 24px;
+  --glass-active-bg: #2D2D2D;
   
-  /* Text colors - modern slate */
-  --text-primary: #0F172A;
-  --text-secondary: #475569;
-  --text-muted: #64748B;
-  --text-metric-label: #475569;
+  /* Text - white on dark */
+  --text-primary: #FFFFFF;
+  --text-secondary: #A0A0A0;
+  --text-muted: #6B6B6B;
+  --text-metric-label: #A0A0A0;
   
-  /* Accent colors - refined, cohesive */
-  --color-weight: #6366F1;
-  --color-muscle: #0891B2;
-  --color-fat-mass: #EA580C;
-  --color-fat-percent: #059669;
+  /* Vibrant accent colors */
+  --color-weight: #FFD60A;
+  --color-muscle: #A855F7;
+  --color-fat-mass: #40E0D0;
+  --color-fat-percent: #5DD39E;
   
-  /* Chart colors */
-  --chart-weight: #6366F1;
-  --chart-muscle: #0891B2;
-  --chart-fat-mass: #EA580C;
-  --chart-fat-percent: #059669;
+  /* Chart colors - purple, yellow, teal */
+  --chart-weight: #FFD60A;
+  --chart-muscle: #A855F7;
+  --chart-fat-mass: #40E0D0;
+  --chart-fat-percent: #5DD39E;
   
   /* UI colors */
-  --border-color: #E2E8F0;
-  --shadow-card: 0 1px 3px rgba(15, 23, 42, 0.04), 0 1px 2px rgba(15, 23, 42, 0.02);
+  --border-color: rgba(255, 255, 255, 0.1);
+  --shadow-card: 0 4px 24px rgba(0, 0, 0, 0.3);
   
   /* Delta colors */
-  --delta-positive: #059669;
-  --delta-negative: #DC2626;
+  --delta-positive: #5DD39E;
+  --delta-negative: #FF6B6B;
   
   /* Border radii */
-  --radius-card: 20px;
-  --radius-metric: 14px;
-  --radius-button: 9px;
+  --radius-card: 24px;
+  --radius-metric: 16px;
+  --radius-button: 12px;
 }
 
-/* Glass utility */
+/* Glass utility - translucent, strong blur, subtle edge */
 .glass {
   background: var(--glass-bg);
   backdrop-filter: blur(var(--glass-blur));
@@ -55,14 +56,19 @@
   box-shadow: var(--glass-shadow);
 }
 
+/* Opaque pill for active/selected state (reference: Feed highlight) */
+.glass-active-pill {
+  background: var(--glass-active-bg);
+  border-radius: var(--radius-metric);
+}
+
 @theme inline {
   --color-background: var(--bg-primary);
   --color-foreground: var(--text-primary);
 }
 
 body {
-  background: linear-gradient(135deg, #F8FAFC 0%, #F1F5F9 50%, #E2E8F0 100%);
-  background-attachment: fixed;
+  background: var(--bg-primary);
   color: var(--text-primary);
   font-family: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, 'Noto Sans', sans-serif;
   -webkit-font-smoothing: antialiased;
@@ -80,12 +86,12 @@ body {
 }
 
 ::-webkit-scrollbar-thumb {
-  background: #94A3B8;
+  background: #404040;
   border-radius: 3px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: #64748B;
+  background: #525252;
 }
 
 /* Input styling */

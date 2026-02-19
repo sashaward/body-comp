@@ -8,7 +8,7 @@ export default function Logo({ className = "" }: { className?: string }) {
       xmlns="http://www.w3.org/2000/svg"
       className={className}
     >
-      <circle cx="20" cy="20" r="20" fill="#000000" />
+      <circle cx="20" cy="20" r="20" fill="#A855F7" />
       <path
         d="M12 25L16 15L20 22L24 12L28 25"
         stroke="white"
