@@ -1,8 +1,9 @@
 "use client";
 
-import { useState, useMemo } from "react";
+import { useState, useMemo, useCallback, useEffect, useRef } from "react";
 import {
   Bar,
+  BarStack,
   Line,
   XAxis,
   YAxis,
@@ -47,6 +48,36 @@ export default function BiometricChart({
   activeMetrics,
 }: BiometricChartProps) {
   const [timeRange, setTimeRange] = useState<TimeRange>("1y");
+  const [isDissolving, setIsDissolving] = useState(false);
+  const [pendingTimeRange, setPendingTimeRange] = useState<TimeRange | null>(null);
+  const [metricFadeOpacity, setMetricFadeOpacity] = useState(1);
+  const prevActiveMetricsRef = useRef(activeMetrics);
+
+  // Fade chart when metric tiles are toggled
+  useEffect(() => {
+    const prev = prevActiveMetricsRef.current.join("-");
+    const next = activeMetrics.join("-");
+    if (prev !== next) {
+      prevActiveMetricsRef.current = activeMetrics;
+      setMetricFadeOpacity(0);
+      const timer = setTimeout(() => setMetricFadeOpacity(1), 200);
+      return () => clearTimeout(timer);
+    }
+  }, [activeMetrics]);
+
+  const handleTimeRangeClick = useCallback((range: TimeRange) => {
+    if (range === timeRange || pendingTimeRange) return;
+    setPendingTimeRange(range);
+    setIsDissolving(true);
+  }, [timeRange, pendingTimeRange]);
+
+  const handleDissolveEnd = useCallback(() => {
+    if (pendingTimeRange) {
+      setTimeRange(pendingTimeRange);
+      setPendingTimeRange(null);
+      setIsDissolving(false);
+    }
+  }, [pendingTimeRange]);
 
   const filteredEntries = useMemo(() => {
     const sorted = [...entries].sort(
@@ -188,11 +219,8 @@ export default function BiometricChart({
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-6">
         <div>
           <h2 className="text-lg font-semibold text-[var(--text-primary)]">
-            Biometric Progress
+            Progress
           </h2>
-          <p className="text-xs text-[var(--text-secondary)] font-normal uppercase tracking-wider mt-0.5">
-            Historical Performance Tracking
-          </p>
         </div>
 
         {/* Time range selector */}
@@ -202,7 +230,7 @@ export default function BiometricChart({
           return (
             <button
               key={range}
-              onClick={() => setTimeRange(range)}
+              onClick={() => handleTimeRangeClick(range)}
               className={`px-4 py-2 rounded-full text-xs font-bold transition-all ${
                 isSelected
                   ? "bg-[var(--glass-active-bg)] text-[var(--text-primary)] border border-white/10 shadow-[0_2px_12px_rgba(0,0,0,0.2)]"
@@ -218,12 +246,21 @@ export default function BiometricChart({
 
       {/* Chart */}
       {chartData.length > 0 ? (
-        <div className="h-80">
-          <ResponsiveContainer width="100%" height="100%">
+        <div
+          className="h-80 w-full min-w-0 transition-opacity duration-300 ease-out"
+          style={{
+            opacity: isDissolving ? 0 : metricFadeOpacity,
+          }}
+          onTransitionEnd={handleDissolveEnd}
+        >
+          <ResponsiveContainer width="100%" height="100%" debounce={0}>
             <ComposedChart
+              key={`${timeRange}-${activeMetrics.join("-")}`}
               data={chartData}
-              margin={{ top: 5, right: showFatPercentLine ? 60 : 5, left: -10, bottom: 5 }}
+              margin={{ top: 10, right: showFatPercentLine ? 80 : 20, left: 10, bottom: 25 }}
               barCategoryGap="20%"
+              animationDuration={800}
+              animationEasing="ease-out"
             >
               <CartesianGrid
                 strokeDasharray="3 3"
@@ -269,40 +306,33 @@ export default function BiometricChart({
               )}
               <Tooltip content={<CustomTooltip />} />
 
-              {/* Stacked bars: each bar only renders when its metric is active */}
-              {activeMetrics.includes("muscle") && (
-                <Bar
-                  yAxisId="left"
-                  dataKey="muscle"
-                  stackId="composition"
-                  fill={metrics.muscle.color}
-                  radius={[0, 0, 0, 0]}
-                  isAnimationActive
-                  animationDuration={800}
-                />
-              )}
-              {activeMetrics.includes("fatMass") && (
-                <Bar
-                  yAxisId="left"
-                  dataKey="fatMass"
-                  stackId="composition"
-                  fill={metrics.fatMass.color}
-                  radius={[0, 0, 0, 0]}
-                  isAnimationActive
-                  animationDuration={800}
-                />
-              )}
-              {(activeMetrics.includes("muscle") || activeMetrics.includes("fatMass")) && (
-                <Bar
-                  yAxisId="left"
-                  dataKey="other"
-                  stackId="composition"
-                  fill={otherMassColor}
-                  radius={[4, 4, 0, 0]}
-                  isAnimationActive
-                  animationDuration={800}
-                  tooltipType="none"
-                />
+              {/* Stacked bars: BarStack gives pill-shaped rounded caps on whole stack */}
+              {showBars && (
+                <BarStack stackId="composition" radius={12}>
+                  {activeMetrics.includes("muscle") && (
+                    <Bar
+                      yAxisId="left"
+                      dataKey="muscle"
+                      fill={metrics.muscle.color}
+                      isAnimationActive={false}
+                    />
+                  )}
+                  {activeMetrics.includes("fatMass") && (
+                    <Bar
+                      yAxisId="left"
+                      dataKey="fatMass"
+                      fill={metrics.fatMass.color}
+                      isAnimationActive={false}
+                    />
+                  )}
+                  <Bar
+                    yAxisId="left"
+                    dataKey="other"
+                    fill={otherMassColor}
+                    tooltipType="none"
+                    isAnimationActive={false}
+                  />
+                </BarStack>
               )}
 
               {/* Weight as line overlay */}
@@ -315,9 +345,6 @@ export default function BiometricChart({
                   strokeWidth={2.5}
                   dot={{ fill: metrics.weight.color, r: 4, strokeWidth: 2, stroke: "#1E1E1E" }}
                   activeDot={{ r: 6, strokeWidth: 2, stroke: "#1E1E1E" }}
-                  isAnimationActive
-                  animationDuration={1200}
-                  animationEasing="ease-out"
                 />
               )}
 
@@ -332,9 +359,6 @@ export default function BiometricChart({
                   strokeDasharray="5 5"
                   dot={{ fill: metrics.fatPercent.color, r: 4, strokeWidth: 2, stroke: "#1E1E1E" }}
                   activeDot={{ r: 6, strokeWidth: 2, stroke: "#1E1E1E" }}
-                  isAnimationActive
-                  animationDuration={1200}
-                  animationEasing="ease-out"
                 />
               )}
             </ComposedChart>

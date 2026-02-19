@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import "./globals.css";
 
 export const metadata: Metadata = {
-  title: "Performance Lab | Body Composition Tracker",
+  title: "BodyComp | Track your progress",
   description: "Track and visualize changes in body weight, skeletal muscle mass, body fat mass, and body fat percentage.",
 };
 

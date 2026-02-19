@@ -2,13 +2,16 @@
 
 import { TrendUpIcon, TrendDownIcon } from "./icons/Icons";
 
+type DeltaVerdict = "good" | "bad" | "neutral";
+
 interface MetricCardProps {
   title: string;
   value: number | null;
   unit: string;
   delta: number | null;
   color: "weight" | "muscle" | "fatMass" | "fatPercent";
-  invertDelta?: boolean; // When true: decrease is good (e.g. weight, body fat)
+  invertDelta?: boolean; // When true: decrease is good (e.g. body fat mass/%)
+  deltaVerdict?: DeltaVerdict; // Override: use custom verdict instead of invertDelta
   isActive?: boolean; // Toggles visibility on graph
   onToggle?: () => void;
 }
@@ -27,14 +30,25 @@ export default function MetricCard({
   delta,
   color,
   invertDelta = false,
+  deltaVerdict,
   isActive = true,
   onToggle,
 }: MetricCardProps) {
   const isPositive = delta !== null && delta > 0;
   const isNegative = delta !== null && delta < 0;
 
-  const deltaIsGood = invertDelta ? isNegative : isPositive;
-  const deltaIsBad = invertDelta ? isPositive : isNegative;
+  const deltaIsGood =
+    deltaVerdict !== undefined
+      ? deltaVerdict === "good"
+      : invertDelta
+        ? isNegative
+        : isPositive;
+  const deltaIsBad =
+    deltaVerdict !== undefined
+      ? deltaVerdict === "bad"
+      : invertDelta
+        ? isPositive
+        : isNegative;
 
   const pillGood = "bg-[var(--glass-active-bg)] text-[var(--delta-positive)] border border-[var(--delta-positive)]/30";
   const pillBad = "bg-[var(--glass-active-bg)] text-[var(--delta-negative)] border border-[var(--delta-negative)]/30";
@@ -51,7 +65,7 @@ export default function MetricCard({
     <button
       type="button"
       onClick={onToggle}
-      className={`w-full text-left rounded-[var(--radius-metric)] p-6 flex flex-col justify-between min-h-[160px] opacity-0 animate-slide-up transition-all cursor-pointer overflow-hidden ${
+      className={`w-full text-left rounded-[var(--radius-metric)] p-6 flex flex-col justify-between min-h-[160px] opacity-0 animate-slide-up transition-all duration-300 ease-out cursor-pointer overflow-hidden hover:scale-[1.02] active:scale-[0.98] ${
         isActive
           ? "bg-[var(--bg-elevated)] border border-white/[0.08] shadow-[0_4px_24px_rgba(0,0,0,0.3)]"
           : "bg-[var(--glass-bg)] backdrop-blur-[20px] border border-white/[0.06] opacity-70 hover:opacity-95 hover:bg-[var(--glass-bg-elevated)]"
@@ -59,20 +73,20 @@ export default function MetricCard({
     >
       <div className="flex items-center justify-between">
         <span
-          className={`text-xs font-bold uppercase tracking-wider ${
+          className={`text-xs font-bold uppercase tracking-wider transition-colors duration-300 ${
             isActive ? "text-[var(--text-secondary)]" : "text-[var(--text-muted)]"
           }`}
         >
           {title}
         </span>
         <div
-          className="w-6 h-6 rounded-full flex items-center justify-center shrink-0"
+          className="w-6 h-6 rounded-full flex items-center justify-center shrink-0 transition-colors duration-300"
           style={{
             backgroundColor: isActive ? outer : "rgba(255,255,255,0.08)",
           }}
         >
           <div
-            className="w-2 h-2 rounded-full"
+            className="w-2 h-2 rounded-full transition-colors duration-300"
             style={{
               backgroundColor: isActive ? inner : "#6B6B6B",
             }}
@@ -84,14 +98,14 @@ export default function MetricCard({
         {value !== null ? (
           <div className="flex items-baseline gap-1.5">
             <span
-              className={`text-4xl font-extrabold tabular-nums ${
+              className={`text-4xl font-extrabold tabular-nums transition-colors duration-300 ${
                 isActive ? "text-[var(--text-primary)]" : "text-[var(--text-muted)]"
               }`}
             >
               {value.toFixed(1)}
             </span>
             <span
-              className={`text-base font-medium uppercase ${
+              className={`text-base font-medium uppercase transition-colors duration-300 ${
                 isActive ? "text-[var(--text-secondary)]" : "text-[var(--text-muted)]"
               }`}
             >

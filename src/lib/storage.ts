@@ -82,6 +82,32 @@ export function saveEntry(entry: Omit<BodyEntry, "id" | "createdAt">): BodyEntry
   return newEntry;
 }
 
+export function updateEntry(
+  id: string,
+  data: Omit<BodyEntry, "id" | "createdAt">
+): BodyEntry | null {
+  const entries = getEntries();
+  const index = entries.findIndex((e) => e.id === id);
+  if (index < 0) return null;
+
+  // When changing date, avoid duplicate - remove old if date changes
+  const existing = entries[index];
+  const dateChanged = existing.date !== data.date;
+  if (dateChanged) {
+    const dateConflict = entries.some((e) => e.id !== id && e.date === data.date);
+    if (dateConflict) return null;
+  }
+
+  const updated: BodyEntry = {
+    ...data,
+    id: existing.id,
+    createdAt: existing.createdAt,
+  };
+  entries[index] = updated;
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(entries));
+  return updated;
+}
+
 export function deleteEntry(id: string): boolean {
   const entries = getEntries();
   const filtered = entries.filter((e) => e.id !== id);

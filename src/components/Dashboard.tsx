@@ -69,14 +69,27 @@ export default function Dashboard() {
     return parseFloat((latestValue - previousValue).toFixed(1));
   };
 
+  const weightDelta = calculateDelta(latest?.bodyWeight, previous?.bodyWeight);
+  const muscleDelta = calculateDelta(latest?.skeletalMuscleMass, previous?.skeletalMuscleMass);
+
+  // Weight verdict: green if up from muscle, red if up from fat only or any down, neutral if no change
+  const weightVerdict =
+    weightDelta !== null
+      ? weightDelta === 0
+        ? undefined
+        : weightDelta > 0
+          ? (muscleDelta !== null && muscleDelta > 0 ? "good" : "bad")
+          : "bad"
+      : undefined;
+
   const metrics = {
     weight: {
       value: latest?.bodyWeight ?? null,
-      delta: calculateDelta(latest?.bodyWeight, previous?.bodyWeight),
+      delta: weightDelta,
     },
     muscle: {
       value: latest?.skeletalMuscleMass ?? null,
-      delta: calculateDelta(latest?.skeletalMuscleMass, previous?.skeletalMuscleMass),
+      delta: muscleDelta,
     },
     fatMass: {
       value: latest?.bodyFatMass ?? null,
@@ -113,7 +126,7 @@ export default function Dashboard() {
                 unit="kg"
                 delta={metrics.weight.delta}
                 color="weight"
-                invertDelta
+                deltaVerdict={weightVerdict}
                 isActive={activeMetrics.includes("weight")}
                 onToggle={() => toggleMetric("weight")}
               />
