@@ -259,8 +259,6 @@ export default function BiometricChart({
               data={chartData}
               margin={{ top: 10, right: showFatPercentLine ? 80 : 20, left: 10, bottom: 25 }}
               barCategoryGap="20%"
-              animationDuration={800}
-              animationEasing="ease-out"
             >
               <CartesianGrid
                 strokeDasharray="3 3"
