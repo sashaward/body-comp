@@ -13,6 +13,7 @@ interface MetricCardProps {
   invertDelta?: boolean; // When true: decrease is good (e.g. body fat mass/%)
   deltaVerdict?: DeltaVerdict; // Override: use custom verdict instead of invertDelta
   isActive?: boolean; // Toggles visibility on graph
+  isSoleActive?: boolean; // True when this is the only metric selected (subtle active emphasis)
   onToggle?: () => void;
 }
 
@@ -32,6 +33,7 @@ export default function MetricCard({
   invertDelta = false,
   deltaVerdict,
   isActive = true,
+  isSoleActive = false,
   onToggle,
 }: MetricCardProps) {
   const isPositive = delta !== null && delta > 0;
@@ -55,8 +57,8 @@ export default function MetricCard({
 
   const formatDelta = (d: number, u: string) => {
     const sign = d > 0 ? "+" : "";
-    const unitDisplay = u === "kg" ? "KG" : u;
-    return `${sign}${d.toFixed(1)}${unitDisplay} VS LAST`;
+    const unitDisplay = u === "kg" ? "kg" : u;
+    return `${sign}${d.toFixed(1)}${unitDisplay} vs last`;
   };
 
   const { inner, outer } = colorConfig[color];
@@ -67,13 +69,20 @@ export default function MetricCard({
       onClick={onToggle}
       className={`w-full text-left rounded-[var(--radius-metric)] p-6 flex flex-col justify-between min-h-[160px] opacity-0 animate-slide-up transition-all duration-300 ease-out cursor-pointer overflow-hidden hover:scale-[1.02] active:scale-[0.98] ${
         isActive
-          ? "bg-[var(--bg-elevated)] border border-white/[0.08] shadow-[0_4px_24px_rgba(0,0,0,0.3)]"
+          ? isSoleActive
+            ? "bg-[var(--bg-elevated)] border border-white/[0.12]"
+            : "bg-[var(--bg-elevated)] border border-white/[0.08]"
           : "bg-[var(--glass-bg)] backdrop-blur-[20px] border border-white/[0.06] opacity-70 hover:opacity-95 hover:bg-[var(--glass-bg-elevated)]"
       }`}
+      style={
+        isActive && isSoleActive
+          ? { boxShadow: `0 0 0 1px ${outer}` }
+          : undefined
+      }
     >
       <div className="flex items-center justify-between">
         <span
-          className={`text-xs font-bold uppercase tracking-wider transition-colors duration-300 ${
+          className={`text-xs font-bold tracking-wider transition-colors duration-300 ${
             isActive ? "text-[var(--text-secondary)]" : "text-[var(--text-muted)]"
           }`}
         >
@@ -105,7 +114,7 @@ export default function MetricCard({
               {value.toFixed(1)}
             </span>
             <span
-              className={`text-base font-medium uppercase transition-colors duration-300 ${
+              className={`text-base font-medium transition-colors duration-300 ${
                 isActive ? "text-[var(--text-secondary)]" : "text-[var(--text-muted)]"
               }`}
             >
@@ -120,7 +129,7 @@ export default function MetricCard({
       {delta !== null && (
         <div className="flex justify-start mt-4">
           <div
-            className={`flex items-center gap-1.5 px-3 py-1 rounded-full font-bold text-xs uppercase tracking-wide ${
+            className={`flex items-center gap-1.5 px-3 py-1 rounded-full font-bold text-xs tracking-wide ${
               deltaIsGood ? pillGood : deltaIsBad ? pillBad : "bg-[var(--glass-active-bg)] text-[var(--text-secondary)] border border-white/10"
             }`}
           >

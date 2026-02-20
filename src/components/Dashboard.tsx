@@ -128,62 +128,70 @@ export default function Dashboard() {
                 color="weight"
                 deltaVerdict={weightVerdict}
                 isActive={activeMetrics.includes("weight")}
+                isSoleActive={activeMetrics.length === 1 && activeMetrics.includes("weight")}
                 onToggle={() => toggleMetric("weight")}
               />
             </div>
             <div className="stagger-2">
               <MetricCard
-                title="Muscle Mass"
+                title="Muscle mass"
                 value={metrics.muscle.value}
                 unit="kg"
                 delta={metrics.muscle.delta}
                 color="muscle"
                 isActive={activeMetrics.includes("muscle")}
+                isSoleActive={activeMetrics.length === 1 && activeMetrics.includes("muscle")}
                 onToggle={() => toggleMetric("muscle")}
               />
             </div>
             <div className="stagger-3">
               <MetricCard
-                title="Body Fat Mass"
+                title="Body fat mass"
                 value={metrics.fatMass.value}
                 unit="kg"
                 delta={metrics.fatMass.delta}
                 color="fatMass"
                 invertDelta
                 isActive={activeMetrics.includes("fatMass")}
+                isSoleActive={activeMetrics.length === 1 && activeMetrics.includes("fatMass")}
                 onToggle={() => toggleMetric("fatMass")}
               />
             </div>
             <div className="stagger-4">
               <MetricCard
-                title="Body Fat"
+                title="Body fat"
                 value={metrics.fatPercent.value}
                 unit="%"
                 delta={metrics.fatPercent.delta}
                 color="fatPercent"
                 invertDelta
                 isActive={activeMetrics.includes("fatPercent")}
+                isSoleActive={activeMetrics.length === 1 && activeMetrics.includes("fatPercent")}
                 onToggle={() => toggleMetric("fatPercent")}
               />
             </div>
           </div>
 
           {/* Chart */}
-          <BiometricChart entries={entries} activeMetrics={activeMetrics} />
+          <BiometricChart
+            entries={entries}
+            activeMetrics={activeMetrics}
+            onLogWeighIn={() => setIsModalOpen(true)}
+          />
         </div>
 
         {/* Footer */}
         <footer className="flex items-center justify-between py-4 text-xs text-[var(--text-secondary)] mt-6">
-          <span className="uppercase tracking-wider font-normal">
-            stored locally
+          <span className="tracking-wider font-normal">
+            Stored locally
           </span>
           <a
             href="https://sashaward.me"
             target="_blank"
             rel="noopener noreferrer"
-            className="uppercase tracking-wider font-normal hover:text-[var(--text-primary)] transition-colors"
+            className="tracking-wider font-normal hover:text-[var(--text-primary)] transition-colors"
           >
-            leave feedback
+            Leave feedback
           </a>
         </footer>
       </div>

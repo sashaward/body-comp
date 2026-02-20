@@ -2,13 +2,15 @@
 
 import { useState, useEffect, useCallback } from "react";
 import Link from "next/link";
-import { ChevronLeftIcon, SaveIcon } from "@/components/icons/Icons";
+import { ChevronLeftIcon } from "@/components/icons/Icons";
 import { getEntries, updateEntry, BodyEntry } from "@/lib/storage";
 import { format } from "date-fns";
 
 export default function EntriesPage() {
   const [entries, setEntries] = useState<BodyEntry[]>([]);
   const [expandedId, setExpandedId] = useState<string | null>(null);
+  const [openingId, setOpeningId] = useState<string | null>(null);
+  const [closingId, setClosingId] = useState<string | null>(null);
   const [editing, setEditing] = useState<Record<string, Partial<BodyEntry>>>({});
   const [savingId, setSavingId] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
@@ -26,19 +28,45 @@ export default function EntriesPage() {
     fetchEntries();
   }, [fetchEntries]);
 
+  useEffect(() => {
+    if (!openingId) return;
+    const id = requestAnimationFrame(() => {
+      requestAnimationFrame(() => setOpeningId(null));
+    });
+    return () => cancelAnimationFrame(id);
+  }, [openingId]);
+
   const handleExpand = (entry: BodyEntry) => {
-    setExpandedId(expandedId === entry.id ? null : entry.id);
-    if (!editing[entry.id]) {
-      setEditing((prev) => ({
-        ...prev,
-        [entry.id]: {
-          date: entry.date,
-          bodyWeight: entry.bodyWeight,
-          skeletalMuscleMass: entry.skeletalMuscleMass,
-          bodyFatMass: entry.bodyFatMass,
-          bodyFatPercentage: entry.bodyFatPercentage,
-        },
-      }));
+    if (expandedId === entry.id) {
+      setClosingId(entry.id);
+      setExpandedId(null);
+    } else {
+      setClosingId(expandedId);
+      setExpandedId(entry.id);
+      setOpeningId(entry.id);
+      if (!editing[entry.id]) {
+        setEditing((prev) => ({
+          ...prev,
+          [entry.id]: {
+            date: entry.date,
+            bodyWeight: entry.bodyWeight,
+            skeletalMuscleMass: entry.skeletalMuscleMass,
+            bodyFatMass: entry.bodyFatMass,
+            bodyFatPercentage: entry.bodyFatPercentage,
+          },
+        }));
+      }
+    }
+  };
+
+  const handleCollapseEnd = () => {
+    if (closingId) {
+      setEditing((prev) => {
+        const next = { ...prev };
+        delete next[closingId];
+        return next;
+      });
+      setClosingId(null);
     }
   };
 
@@ -120,12 +148,12 @@ export default function EntriesPage() {
               className="flex items-center gap-2 text-[var(--text-secondary)] hover:text-[var(--text-primary)] transition-colors"
             >
               <ChevronLeftIcon className="w-5 h-5" />
-              <span className="text-sm font-medium uppercase tracking-wider">
+              <span className="text-sm font-medium tracking-wider">
                 Back
               </span>
             </Link>
             <h1 className="text-lg font-semibold text-[var(--text-primary)]">
-              All Entries
+              All entries
             </h1>
             <div className="w-20" />
           </div>
@@ -154,15 +182,29 @@ export default function EntriesPage() {
                       {entry.bodyWeight} kg · {entry.bodyFatPercentage}% fat
                     </span>
                   </div>
-                  <span className="text-[var(--text-muted)] text-xs">
-                    {expandedId === entry.id ? "▼" : "▶"}
+                  <span
+                    className={`text-[var(--text-muted)] text-xs transition-transform duration-300 ease-out ${
+                      expandedId === entry.id ? "rotate-90" : ""
+                    }`}
+                  >
+                    ▶
                   </span>
                 </button>
 
-                {expandedId === entry.id && editing[entry.id] && (
+                {((expandedId === entry.id || openingId === entry.id || closingId === entry.id) && editing[entry.id]) && (
+                  <div
+                    className={`overflow-hidden transition-all ${
+                      expandedId === entry.id && !openingId
+                        ? "duration-300 ease-out max-h-[500px] opacity-100"
+                        : "duration-150 ease-in max-h-0 opacity-0"
+                    }`}
+                    onTransitionEnd={() => {
+                      if (closingId === entry.id) handleCollapseEnd();
+                    }}
+                  >
                   <div className="px-4 pb-4 pt-1 border-t border-white/10 space-y-4">
                     <div>
-                      <label className="block text-xs font-semibold text-[var(--text-metric-label)] uppercase tracking-wider mb-1">
+                      <label className="block text-xs font-semibold text-[var(--text-metric-label)] tracking-wider mb-1">
                         Date
                       </label>
                       <input
@@ -176,7 +218,7 @@ export default function EntriesPage() {
                     </div>
                     <div className="grid grid-cols-2 gap-4">
                       <div>
-                        <label className="block text-xs font-semibold text-[var(--text-metric-label)] uppercase tracking-wider mb-1">
+                        <label className="block text-xs font-semibold text-[var(--text-metric-label)] tracking-wider mb-1">
                           Weight (kg)
                         </label>
                         <input
@@ -194,7 +236,7 @@ export default function EntriesPage() {
                         />
                       </div>
                       <div>
-                        <label className="block text-xs font-semibold text-[var(--text-metric-label)] uppercase tracking-wider mb-1">
+                        <label className="block text-xs font-semibold text-[var(--text-metric-label)] tracking-wider mb-1">
                           Muscle (kg)
                         </label>
                         <input
@@ -212,8 +254,8 @@ export default function EntriesPage() {
                         />
                       </div>
                       <div>
-                        <label className="block text-xs font-semibold text-[var(--text-metric-label)] uppercase tracking-wider mb-1">
-                          Fat Mass (kg)
+                        <label className="block text-xs font-semibold text-[var(--text-metric-label)] tracking-wider mb-1">
+                          Fat mass (kg)
                         </label>
                         <input
                           type="number"
@@ -230,8 +272,8 @@ export default function EntriesPage() {
                         />
                       </div>
                       <div>
-                        <label className="block text-xs font-semibold text-[var(--text-metric-label)] uppercase tracking-wider mb-1">
-                          Body Fat (%)
+                        <label className="block text-xs font-semibold text-[var(--text-metric-label)] tracking-wider mb-1">
+                          Body fat (%)
                         </label>
                         <input
                           type="number"
@@ -253,9 +295,9 @@ export default function EntriesPage() {
                       disabled={savingId === entry.id}
                       className="flex items-center gap-2 bg-[var(--color-weight)] text-[#121212] px-4 py-2.5 rounded-[var(--radius-button)] font-semibold text-sm hover:brightness-110 disabled:opacity-50 transition-all"
                     >
-                      <SaveIcon className="w-4 h-4" />
                       {savingId === entry.id ? "Saving..." : "Save"}
                     </button>
+                  </div>
                   </div>
                 )}
               </div>
@@ -263,9 +305,20 @@ export default function EntriesPage() {
           </div>
 
           {entries.length === 0 && (
-            <p className="text-center text-[var(--text-secondary)] py-8">
-              No entries yet. Log your first weigh-in from the dashboard.
-            </p>
+            <div className="text-center py-12">
+              <p className="text-[var(--text-primary)] font-medium">
+                No entries yet
+              </p>
+              <p className="text-[var(--text-secondary)] text-sm mt-1">
+                Track your body composition from the dashboard — add your first weigh-in to get started.
+              </p>
+              <Link
+                href="/"
+                className="inline-flex items-center gap-2 mt-4 bg-[var(--color-weight)] text-[#121212] px-5 py-2.5 rounded-[var(--radius-button)] font-semibold text-sm hover:brightness-110 transition-all"
+              >
+                Back to dashboard
+              </Link>
+            </div>
           )}
         </div>
       </div>
