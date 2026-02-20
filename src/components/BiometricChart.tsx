@@ -406,7 +406,7 @@ export default function BiometricChart({
                   stroke={metrics.weight.color}
                   strokeWidth={2.5}
                   animationDuration={1600}
-                  animationEasing="cubic-bezier(0.25, 1, 0.5, 1)"
+                  animationEasing={"cubic-bezier(0.25, 1, 0.5, 1)" as "ease"}
                   dot={{ fill: metrics.weight.color, r: 4, strokeWidth: 2, stroke: "#1E1E1E" }}
                   activeDot={{ r: 6, strokeWidth: 2, stroke: "#1E1E1E" }}
                 />
@@ -423,7 +423,7 @@ export default function BiometricChart({
                   strokeDasharray="5 5"
                   strokeLinecap="round"
                   animationDuration={1600}
-                  animationEasing="cubic-bezier(0.25, 1, 0.5, 1)"
+                  animationEasing={"cubic-bezier(0.25, 1, 0.5, 1)" as "ease"}
                   dot={<SolidDot fill={metrics.fatPercent.color} r={4} />}
                   activeDot={<SolidActiveDot fill={metrics.fatPercent.color} r={6} />}
                 />
