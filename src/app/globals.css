@@ -155,3 +155,9 @@ input[type="number"] {
 .stagger-3 { animation-delay: 0.15s; }
 .stagger-4 { animation-delay: 0.2s; }
 .stagger-5 { animation-delay: 0.25s; }
+
+/* Hide bottom X-axis line */
+.chart-no-bottom-grid .recharts-cartesian-axis-line {
+  stroke: none !important;
+  stroke-opacity: 0 !important;
+}

@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { CloseIcon, CalendarIcon, SaveIcon } from "./icons/Icons";
+import { CloseIcon, CalendarIcon } from "./icons/Icons";
 import { format } from "date-fns";
 
 interface WeighInModalProps {
@@ -70,7 +70,7 @@ export default function WeighInModal({ isOpen, onClose, onSave }: WeighInModalPr
       <div className="w-full max-w-md animate-scale-in rounded-[var(--radius-card)] bg-[var(--bg-card)] border border-white/[0.08] shadow-[0_8px_32px_rgba(0,0,0,0.5)]">
         <div className="p-6">
           <div className="flex items-center justify-between mb-1">
-            <h2 className="text-xl font-semibold text-[var(--text-primary)]">New Weigh-in</h2>
+            <h2 className="text-xl font-semibold text-[var(--text-primary)]">New weigh-in</h2>
             <button
               onClick={onClose}
               className="p-1 text-[var(--text-secondary)] hover:text-[var(--text-primary)] transition-colors rounded-[var(--radius-button)] hover:bg-white/5"
@@ -78,7 +78,7 @@ export default function WeighInModal({ isOpen, onClose, onSave }: WeighInModalPr
               <CloseIcon className="w-5 h-5" />
             </button>
           </div>
-          <p className="text-xs text-[var(--text-secondary)] font-normal uppercase tracking-wider mb-6">
+          <p className="text-xs text-[var(--text-secondary)] font-normal tracking-wider mb-6">
             Record your performance metrics
           </p>
 
@@ -92,8 +92,8 @@ export default function WeighInModal({ isOpen, onClose, onSave }: WeighInModalPr
             <div className="space-y-5">
               {/* Date field */}
               <div>
-                <label className="block text-xs font-semibold text-[var(--text-metric-label)] uppercase tracking-wider mb-2">
-                  Date of Entry
+<label className="block text-xs font-semibold text-[var(--text-metric-label)] tracking-wider mb-2">
+                Date of entry
                 </label>
                 <div className="relative">
                   <CalendarIcon className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-[var(--text-secondary)]" />
@@ -110,7 +110,7 @@ export default function WeighInModal({ isOpen, onClose, onSave }: WeighInModalPr
               {/* Metric fields - 2x2 grid */}
               <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <label className="block text-xs font-semibold text-[var(--text-metric-label)] uppercase tracking-wider mb-2">
+                  <label className="block text-xs font-semibold text-[var(--text-metric-label)] tracking-wider mb-2">
                     Weight (kg)
                   </label>
                   <input
@@ -127,8 +127,8 @@ export default function WeighInModal({ isOpen, onClose, onSave }: WeighInModalPr
                 </div>
 
                 <div>
-                  <label className="block text-xs font-semibold text-[var(--text-metric-label)] uppercase tracking-wider mb-2">
-                    Skeletal Muscle (kg)
+                  <label className="block text-xs font-semibold text-[var(--text-metric-label)] tracking-wider mb-2">
+                    Skeletal muscle (kg)
                   </label>
                   <input
                     type="number"
@@ -144,8 +144,8 @@ export default function WeighInModal({ isOpen, onClose, onSave }: WeighInModalPr
                 </div>
 
                 <div>
-                  <label className="block text-xs font-semibold text-[var(--text-metric-label)] uppercase tracking-wider mb-2">
-                    Fat Mass (kg)
+                  <label className="block text-xs font-semibold text-[var(--text-metric-label)] tracking-wider mb-2">
+                    Fat mass (kg)
                   </label>
                   <input
                     type="number"
@@ -161,8 +161,8 @@ export default function WeighInModal({ isOpen, onClose, onSave }: WeighInModalPr
                 </div>
 
                 <div>
-                  <label className="block text-xs font-semibold text-[var(--text-metric-label)] uppercase tracking-wider mb-2">
-                    Body Fat (%)
+                  <label className="block text-xs font-semibold text-[var(--text-metric-label)] tracking-wider mb-2">
+                    Body fat (%)
                   </label>
                   <input
                     type="number"
@@ -184,8 +184,7 @@ export default function WeighInModal({ isOpen, onClose, onSave }: WeighInModalPr
               disabled={!isValid || isLoading}
               className="w-full mt-6 flex items-center justify-center gap-2 bg-[var(--color-weight)] text-[#121212] px-5 py-3.5 rounded-[var(--radius-button)] font-semibold text-sm hover:brightness-110 disabled:opacity-50 disabled:brightness-100 disabled:cursor-not-allowed transition-all shadow-[0_4px_24px_rgba(255,214,10,0.25)]"
             >
-              <SaveIcon className="w-4 h-4" />
-              <span>{isLoading ? "Saving..." : "Complete Entry"}</span>
+              <span>{isLoading ? "Saving..." : "Complete entry"}</span>
             </button>
           </form>
         </div>

@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useMemo, useCallback, useEffect, useRef } from "react";
+import React, { useState, useMemo, useCallback, useEffect, useRef } from "react";
 import {
   Bar,
   BarStack,
@@ -20,6 +20,7 @@ type MetricKey = "weight" | "muscle" | "fatMass" | "fatPercent";
 interface BiometricChartProps {
   entries: BodyEntry[];
   activeMetrics: MetricKey[];
+  onLogWeighIn?: () => void;
 }
 
 type TimeRange = "3m" | "6m" | "1y" | "all";
@@ -29,39 +30,57 @@ const metrics: Record<
   { label: string; color: string; unit: string }
 > = {
   weight: { label: "Weight", color: "#FFD60A", unit: "kg" },
-  muscle: { label: "Skeletal Muscle", color: "#A855F7", unit: "kg" },
-  fatMass: { label: "Body Fat Mass", color: "#40E0D0", unit: "kg" },
-  fatPercent: { label: "Body Fat %", color: "#5DD39E", unit: "%" },
+  muscle: { label: "Skeletal muscle", color: "#A855F7", unit: "kg" },
+  fatMass: { label: "Body fat mass", color: "#40E0D0", unit: "kg" },
+  fatPercent: { label: "Body fat %", color: "#5DD39E", unit: "%" },
 };
 
 const otherMassColor = "#6B6B6B";
 
+// Custom dot with no border (overrides Line's strokeDasharray inheritance)
+const SolidDot = (props: React.SVGProps<SVGCircleElement>) => {
+  const { cx = 0, cy = 0, fill, r = 4, stroke: _s, strokeWidth: _sw, strokeDasharray: _sa, ...rest } = props;
+  return <circle cx={cx} cy={cy} r={r} fill={fill} stroke="none" {...rest} />;
+};
+
+const SolidActiveDot = (props: React.SVGProps<SVGCircleElement>) => {
+  const { cx = 0, cy = 0, fill, r = 6, stroke: _s, strokeWidth: _sw, strokeDasharray: _sa, ...rest } = props;
+  return <circle cx={cx} cy={cy} r={r} fill={fill} stroke="none" {...rest} />;
+};
+
 const timeRanges: Record<TimeRange, { label: string; days: number | null }> = {
-  "3m": { label: "3M", days: 90 },
-  "6m": { label: "6M", days: 180 },
-  "1y": { label: "1Y", days: 365 },
+  "3m": { label: "3m", days: 90 },
+  "6m": { label: "6m", days: 180 },
+  "1y": { label: "1y", days: 365 },
   all: { label: "All", days: null },
 };
 
 export default function BiometricChart({
   entries,
   activeMetrics,
+  onLogWeighIn,
 }: BiometricChartProps) {
   const [timeRange, setTimeRange] = useState<TimeRange>("1y");
   const [isDissolving, setIsDissolving] = useState(false);
   const [pendingTimeRange, setPendingTimeRange] = useState<TimeRange | null>(null);
   const [metricFadeOpacity, setMetricFadeOpacity] = useState(1);
+  const [displayedMetrics, setDisplayedMetrics] = useState<MetricKey[]>(activeMetrics);
   const prevActiveMetricsRef = useRef(activeMetrics);
 
-  // Fade chart when metric tiles are toggled
+  // Fade out -> swap metrics -> fade in when metric tiles are toggled (preserves line drawing animation)
   useEffect(() => {
     const prev = prevActiveMetricsRef.current.join("-");
     const next = activeMetrics.join("-");
     if (prev !== next) {
       prevActiveMetricsRef.current = activeMetrics;
       setMetricFadeOpacity(0);
-      const timer = setTimeout(() => setMetricFadeOpacity(1), 200);
+      const timer = setTimeout(() => {
+        setDisplayedMetrics(activeMetrics);
+        setMetricFadeOpacity(1);
+      }, 300);
       return () => clearTimeout(timer);
+    } else {
+      setDisplayedMetrics(activeMetrics);
     }
   }, [activeMetrics]);
 
@@ -97,6 +116,8 @@ export default function BiometricChart({
   const chartData = useMemo(() => {
     return filteredEntries.map((entry) => {
       const other = entry.bodyWeight - entry.skeletalMuscleMass - entry.bodyFatMass;
+      const nonFat = entry.bodyWeight - entry.bodyFatMass; // Total weight minus fat, for fat-in-context bars
+      const nonMuscle = entry.bodyWeight - entry.skeletalMuscleMass; // Total weight minus muscle, for muscle-in-context bars
       return {
         date: entry.date,
         formattedDate: format(parseISO(entry.date), "MMM yy"),
@@ -104,6 +125,8 @@ export default function BiometricChart({
         muscle: entry.skeletalMuscleMass,
         fatMass: entry.bodyFatMass,
         other: Math.max(0, other), // Other mass (water, bones, organs, etc.)
+        nonFat: Math.max(0, nonFat), // Non-fat mass, for fat-as-proportion-of-weight bars
+        nonMuscle: Math.max(0, nonMuscle), // Non-muscle mass, for muscle-as-proportion-of-weight bars
         fatPercent: entry.bodyFatPercentage,
       };
     });
@@ -138,11 +161,13 @@ export default function BiometricChart({
     const data = payload[0]?.payload;
     if (!data) return null;
 
-    const showWeight = activeMetrics.includes("weight");
-    const showMuscle = activeMetrics.includes("muscle");
-    const showFatMass = activeMetrics.includes("fatMass");
-    const showFatPercent = activeMetrics.includes("fatPercent");
+    const showWeight = displayedMetrics.includes("weight");
+    const showMuscle = displayedMetrics.includes("muscle");
+    const showFatMass = displayedMetrics.includes("fatMass");
+    const showFatPercent = displayedMetrics.includes("fatPercent");
     const showBars = showMuscle || showFatMass;
+    const showFatMassOnly = showFatMass && !showMuscle;
+    const showMuscleOnly = showMuscle && !showFatMass;
 
     return (
       <div className="bg-[var(--bg-elevated)] backdrop-blur-xl rounded-[var(--radius-metric)] shadow-[0_8px_32px_rgba(0,0,0,0.4)] border border-white/[0.08] p-3 min-w-[160px]">
@@ -150,7 +175,7 @@ export default function BiometricChart({
           {format(parseISO(data.date), "MMMM d, yyyy")}
         </p>
         <div className="space-y-1.5">
-          {showWeight && (
+          {showWeight && !showFatMassOnly && !showMuscleOnly && (
             <div className="flex items-center justify-between gap-4">
               <div className="flex items-center gap-2">
                 <div className="w-2 h-2 rounded-full" style={{ backgroundColor: metrics.weight.color }} />
@@ -168,22 +193,22 @@ export default function BiometricChart({
                 <span className="text-xs text-[var(--text-secondary)]">{metrics.muscle.label}</span>
               </div>
               <span className="text-xs font-semibold text-[var(--text-primary)]">
-                {data.muscle.toFixed(1)} kg
+                {data.muscle.toFixed(1)} kg{showMuscleOnly ? ` of ${data.weight.toFixed(1)} kg` : ""}
               </span>
             </div>
           )}
-          {showFatMass && (
+          {showFatMass && !showMuscleOnly && (
             <div className="flex items-center justify-between gap-4">
               <div className="flex items-center gap-2">
                 <div className="w-2 h-2 rounded-full" style={{ backgroundColor: metrics.fatMass.color }} />
                 <span className="text-xs text-[var(--text-secondary)]">{metrics.fatMass.label}</span>
               </div>
               <span className="text-xs font-semibold text-[var(--text-primary)]">
-                {data.fatMass.toFixed(1)} kg
+                {data.fatMass.toFixed(1)} kg{showFatMassOnly ? ` of ${data.weight.toFixed(1)} kg` : ""}
               </span>
             </div>
           )}
-          {showFatPercent && (
+          {showFatPercent && !showMuscleOnly && (
             <div className="flex items-center justify-between gap-4">
               <div className="flex items-center gap-2">
                 <div className="w-2 h-2 rounded-full" style={{ backgroundColor: metrics.fatPercent.color }} />
@@ -194,11 +219,11 @@ export default function BiometricChart({
               </span>
             </div>
           )}
-          {showBars && (
+          {showBars && !showFatMassOnly && !showMuscleOnly && (
             <div className="flex items-center justify-between gap-4">
               <div className="flex items-center gap-2">
                 <div className="w-2 h-2 rounded-full" style={{ backgroundColor: otherMassColor }} />
-                <span className="text-xs text-[var(--text-secondary)]">Other Mass</span>
+                <span className="text-xs text-[var(--text-secondary)]">Other mass</span>
               </div>
               <span className="text-xs font-semibold text-[var(--text-primary)]">
                 {data.other.toFixed(1)} kg
@@ -210,8 +235,11 @@ export default function BiometricChart({
     );
   };
 
-  const showBars = activeMetrics.includes("muscle") || activeMetrics.includes("fatMass");
-  const showFatPercentLine = activeMetrics.includes("fatPercent");
+  const showBars = displayedMetrics.includes("muscle") || displayedMetrics.includes("fatMass");
+  const showFatPercentLine = displayedMetrics.includes("fatPercent");
+  // Fat/muscle only: show as proportion of total weight; composition: show muscle + fat + other
+  const showFatMassOnly = displayedMetrics.includes("fatMass") && !displayedMetrics.includes("muscle");
+  const showMuscleOnly = displayedMetrics.includes("muscle") && !displayedMetrics.includes("fatMass");
 
   return (
     <div className="opacity-0 animate-slide-up stagger-5">
@@ -247,29 +275,31 @@ export default function BiometricChart({
       {/* Chart */}
       {chartData.length > 0 ? (
         <div
-          className="h-80 w-full min-w-0 transition-opacity duration-300 ease-out"
+          className="chart-no-bottom-grid h-80 w-full min-w-0 transition-opacity duration-300 ease-out"
           style={{
             opacity: isDissolving ? 0 : metricFadeOpacity,
           }}
           onTransitionEnd={handleDissolveEnd}
         >
-          <ResponsiveContainer width="100%" height="100%" debounce={0}>
+          <ResponsiveContainer width="100%" height="100%" debounce={0} className="chart-no-bottom-grid">
             <ComposedChart
-              key={`${timeRange}-${activeMetrics.join("-")}`}
+              key={`${timeRange}-${displayedMetrics.join("-")}`}
               data={chartData}
               margin={{ top: 10, right: showFatPercentLine ? 80 : 20, left: 10, bottom: 25 }}
               barCategoryGap="20%"
+              barSize={24}
             >
               <CartesianGrid
-                strokeDasharray="3 3"
+                strokeDasharray="4 14"
                 stroke="rgba(255,255,255,0.08)"
+                strokeLinecap="round"
                 vertical={false}
               />
               <XAxis
                 dataKey="formattedDate"
                 tick={{ fontSize: 11, fill: "#A0A0A0" }}
                 tickLine={false}
-                axisLine={{ stroke: "rgba(255,255,255,0.1)" }}
+                axisLine={{ stroke: "transparent", strokeWidth: 0 }}
                 dy={10}
               />
               <YAxis
@@ -304,50 +334,86 @@ export default function BiometricChart({
               )}
               <Tooltip content={<CustomTooltip />} />
 
-              {/* Stacked bars: BarStack gives pill-shaped rounded caps on whole stack */}
+              {/* Stacked bars: fat/muscle-only = as proportion of total weight; composition = muscle + fat + other */}
               {showBars && (
-                <BarStack stackId="composition" radius={12}>
-                  {activeMetrics.includes("muscle") && (
+                showMuscleOnly ? (
+                  <BarStack stackId="muscleInWeight" radius={12}>
                     <Bar
                       yAxisId="left"
                       dataKey="muscle"
                       fill={metrics.muscle.color}
                       isAnimationActive={false}
                     />
-                  )}
-                  {activeMetrics.includes("fatMass") && (
+                    <Bar
+                      yAxisId="left"
+                      dataKey="nonMuscle"
+                      fill="rgba(255,255,255,0.06)"
+                      tooltipType="none"
+                      isAnimationActive={false}
+                    />
+                  </BarStack>
+                ) : showFatMassOnly ? (
+                  <BarStack stackId="fatInWeight" radius={12}>
                     <Bar
                       yAxisId="left"
                       dataKey="fatMass"
                       fill={metrics.fatMass.color}
                       isAnimationActive={false}
                     />
-                  )}
-                  <Bar
-                    yAxisId="left"
-                    dataKey="other"
-                    fill={otherMassColor}
-                    tooltipType="none"
-                    isAnimationActive={false}
-                  />
-                </BarStack>
+                    <Bar
+                      yAxisId="left"
+                      dataKey="nonFat"
+                      fill="rgba(255,255,255,0.06)"
+                      tooltipType="none"
+                      isAnimationActive={false}
+                    />
+                  </BarStack>
+                ) : (
+                  <BarStack stackId="composition" radius={12}>
+                    {displayedMetrics.includes("muscle") && (
+                      <Bar
+                        yAxisId="left"
+                        dataKey="muscle"
+                        fill={metrics.muscle.color}
+                        isAnimationActive={false}
+                      />
+                    )}
+                    {displayedMetrics.includes("fatMass") && (
+                      <Bar
+                        yAxisId="left"
+                        dataKey="fatMass"
+                        fill={metrics.fatMass.color}
+                        isAnimationActive={false}
+                      />
+                    )}
+                    <Bar
+                      yAxisId="left"
+                      dataKey="other"
+                      fill={otherMassColor}
+                      tooltipType="none"
+                      isAnimationActive={false}
+                    />
+                  </BarStack>
+                )
               )}
 
               {/* Weight as line overlay */}
-              {activeMetrics.includes("weight") && (
+              {displayedMetrics.includes("weight") && (
                 <Line
                   yAxisId="left"
                   type="monotone"
                   dataKey="weight"
                   stroke={metrics.weight.color}
                   strokeWidth={2.5}
+                  animationDuration={1600}
+                  animationEasing="cubic-bezier(0.25, 1, 0.5, 1)"
                   dot={{ fill: metrics.weight.color, r: 4, strokeWidth: 2, stroke: "#1E1E1E" }}
                   activeDot={{ r: 6, strokeWidth: 2, stroke: "#1E1E1E" }}
                 />
               )}
 
               {/* Body fat percentage on secondary axis */}
-              {activeMetrics.includes("fatPercent") && (
+              {displayedMetrics.includes("fatPercent") && (
                 <Line
                   yAxisId="right"
                   type="monotone"
@@ -355,8 +421,11 @@ export default function BiometricChart({
                   stroke={metrics.fatPercent.color}
                   strokeWidth={2.5}
                   strokeDasharray="5 5"
-                  dot={{ fill: metrics.fatPercent.color, r: 4, strokeWidth: 2, stroke: "#1E1E1E" }}
-                  activeDot={{ r: 6, strokeWidth: 2, stroke: "#1E1E1E" }}
+                  strokeLinecap="round"
+                  animationDuration={1600}
+                  animationEasing="cubic-bezier(0.25, 1, 0.5, 1)"
+                  dot={<SolidDot fill={metrics.fatPercent.color} r={4} />}
+                  activeDot={<SolidActiveDot fill={metrics.fatPercent.color} r={6} />}
                 />
               )}
             </ComposedChart>
@@ -364,11 +433,21 @@ export default function BiometricChart({
         </div>
       ) : (
         <div className="h-80 flex items-center justify-center">
-          <div className="text-center bg-[var(--bg-elevated)] rounded-[var(--radius-metric)] px-8 py-6 border border-white/[0.08]">
-            <p className="text-[var(--text-muted)] text-sm">No data to display</p>
-            <p className="text-[var(--text-muted)] text-xs mt-1 opacity-80">
-              Log your first weigh-in to see progress
+          <div className="text-center bg-[var(--bg-elevated)] rounded-[var(--radius-metric)] px-8 py-10 border border-white/[0.08] max-w-sm">
+            <h3 className="text-lg font-semibold text-[var(--text-primary)]">
+              Track your body composition
+            </h3>
+            <p className="text-[var(--text-secondary)] text-sm mt-2 leading-relaxed">
+              Log weight, muscle mass, and body fat over time. See how your composition changes—not just the number on the scale.
             </p>
+            {onLogWeighIn && (
+              <button
+                onClick={onLogWeighIn}
+                className="mt-6 flex items-center gap-2 bg-[var(--color-weight)] text-[#121212] px-6 py-3 rounded-[var(--radius-button)] font-semibold text-sm hover:brightness-110 transition-all shadow-[0_4px_24px_rgba(255,214,10,0.25)] mx-auto"
+              >
+                Add your first weigh-in
+              </button>
+            )}
           </div>
         </div>
       )}
