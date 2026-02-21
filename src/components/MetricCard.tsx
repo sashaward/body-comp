@@ -67,7 +67,7 @@ export default function MetricCard({
     <button
       type="button"
       onClick={onToggle}
-      className={`w-full text-left rounded-[var(--radius-metric)] p-6 flex flex-col justify-between min-h-[160px] opacity-0 animate-slide-up transition-all duration-300 ease-out cursor-pointer overflow-hidden hover:scale-[1.02] active:scale-[0.98] ${
+      className={`w-full text-left rounded-[var(--radius-metric)] p-6 flex flex-col justify-between min-h-[150px] opacity-0 animate-slide-up transition-all duration-300 ease-out cursor-pointer overflow-hidden hover:scale-[1.02] active:scale-[0.98] ${
         isActive
           ? isSoleActive
             ? "bg-[var(--bg-elevated)] border border-white/[0.12]"
@@ -103,7 +103,7 @@ export default function MetricCard({
         </div>
       </div>
 
-      <div className="mt-4">
+      <div className="mt-3">
         {value !== null ? (
           <div className="flex items-baseline gap-1.5">
             <span
@@ -127,9 +127,9 @@ export default function MetricCard({
       </div>
 
       {delta !== null && (
-        <div className="flex justify-start mt-4">
+        <div className="flex justify-start mt-3">
           <div
-            className={`flex items-center gap-1.5 px-3 py-1 rounded-full font-bold text-xs tracking-wide ${
+            className={`flex items-center gap-2 px-4 py-1.5 rounded-full font-bold text-xs tracking-wide ${
               deltaIsGood ? pillGood : deltaIsBad ? pillBad : "bg-[var(--glass-active-bg)] text-[var(--text-secondary)] border border-white/10"
             }`}
           >

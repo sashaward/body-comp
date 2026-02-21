@@ -2,8 +2,10 @@
 
 import { useState, useEffect, useCallback } from "react";
 import Link from "next/link";
-import { ChevronLeftIcon } from "@/components/icons/Icons";
-import { getEntries, updateEntry, BodyEntry } from "@/lib/storage";
+import { ChevronDownIcon } from "@/components/icons/Icons";
+import EntriesHeader from "@/components/EntriesHeader";
+import ConfirmModal from "@/components/ConfirmModal";
+import { getEntries, updateEntry, clearAllEntries, BodyEntry } from "@/lib/storage";
 import { format } from "date-fns";
 
 export default function EntriesPage() {
@@ -14,6 +16,7 @@ export default function EntriesPage() {
   const [editing, setEditing] = useState<Record<string, Partial<BodyEntry>>>({});
   const [savingId, setSavingId] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
+  const [isClearConfirmOpen, setIsClearConfirmOpen] = useState(false);
 
   const fetchEntries = useCallback(() => {
     const data = getEntries();
@@ -138,33 +141,29 @@ export default function EntriesPage() {
     }
   };
 
+  const handleClearAllClick = () => setIsClearConfirmOpen(true);
+
+  const handleClearAllConfirm = () => {
+    clearAllEntries();
+    fetchEntries();
+  };
+
   return (
-    <div className="min-h-screen p-4 sm:p-8 bg-[var(--bg-primary)]">
+    <div className="min-h-screen p-6 sm:p-10 bg-black/70 backdrop-blur-md">
       <div className="max-w-2xl mx-auto">
-        <div className="rounded-[var(--radius-card)] p-6 sm:p-8 space-y-6 opacity-0 animate-fade-in bg-[var(--bg-card)] border border-white/[0.06] shadow-[var(--shadow-card)]">
-          <div className="flex items-center justify-between">
-            <Link
-              href="/"
-              className="flex items-center gap-2 text-[var(--text-secondary)] hover:text-[var(--text-primary)] transition-colors"
-            >
-              <ChevronLeftIcon className="w-5 h-5" />
-              <span className="text-sm font-medium tracking-wider">
-                Back
-              </span>
-            </Link>
-            <h1 className="text-lg font-semibold text-[var(--text-primary)]">
-              All entries
-            </h1>
-            <div className="w-20" />
-          </div>
+        <div className="rounded-[var(--radius-card)] p-8 sm:p-10 space-y-8 opacity-0 animate-fade-in bg-[var(--bg-card)] border border-white/[0.06] shadow-[var(--shadow-card)]">
+          <EntriesHeader
+            onClearAll={handleClearAllClick}
+            hasEntries={entries.length > 0}
+          />
 
           {error && (
-            <div className="p-3 bg-[var(--glass-active-bg)] border border-[var(--delta-negative)]/30 rounded-[var(--radius-button)] text-sm text-[var(--delta-negative)]">
+            <div className="p-4 bg-[var(--glass-active-bg)] border border-[var(--delta-negative)]/30 rounded-[var(--radius-button)] text-sm text-[var(--delta-negative)]">
               {error}
             </div>
           )}
 
-          <div className="space-y-2">
+          <div className="space-y-3">
             {entries.map((entry) => (
               <div
                 key={entry.id}
@@ -172,23 +171,21 @@ export default function EntriesPage() {
               >
                 <button
                   onClick={() => handleExpand(entry)}
-                  className="w-full text-left px-4 py-3 flex items-center justify-between hover:bg-white/5 transition-colors"
+                  className="w-full text-left px-5 py-4 flex items-center justify-between hover:bg-white/5 transition-colors"
                 >
-                  <div className="flex items-center gap-4">
-                    <span className="text-[var(--text-primary)] font-medium tabular-nums">
+                  <div className="flex items-center gap-5">
+                    <span className="w-[7.5rem] shrink-0 text-[var(--text-primary)] font-medium tabular-nums">
                       {format(new Date(entry.date), "MMM d, yyyy")}
                     </span>
                     <span className="text-[var(--text-secondary)] text-sm tabular-nums">
                       {entry.bodyWeight} kg · {entry.bodyFatPercentage}% fat
                     </span>
                   </div>
-                  <span
-                    className={`text-[var(--text-muted)] text-xs transition-transform duration-300 ease-out ${
-                      expandedId === entry.id ? "rotate-90" : ""
+                  <ChevronDownIcon
+                    className={`w-5 h-5 shrink-0 text-[var(--text-muted)] transition-transform duration-300 ease-out ${
+                      expandedId === entry.id ? "" : "-rotate-90"
                     }`}
-                  >
-                    ▶
-                  </span>
+                  />
                 </button>
 
                 {((expandedId === entry.id || openingId === entry.id || closingId === entry.id) && editing[entry.id]) && (
@@ -202,9 +199,9 @@ export default function EntriesPage() {
                       if (closingId === entry.id) handleCollapseEnd();
                     }}
                   >
-                  <div className="px-4 pb-4 pt-1 border-t border-white/10 space-y-4">
+                  <div className="px-5 pb-5 pt-2 border-t border-white/10 space-y-5">
                     <div>
-                      <label className="block text-xs font-semibold text-[var(--text-metric-label)] tracking-wider mb-1">
+                      <label className="block text-xs font-semibold text-[var(--text-metric-label)] tracking-wider mb-2">
                         Date
                       </label>
                       <input
@@ -213,12 +210,12 @@ export default function EntriesPage() {
                         onChange={(e) =>
                           handleEditChange(entry.id, "date", e.target.value)
                         }
-                        className="w-full px-3 py-2 bg-[var(--bg-primary)] border border-white/10 rounded-[var(--radius-button)] text-[var(--text-primary)] text-sm"
+                        className="w-full px-4 py-3 bg-[var(--bg-primary)] border border-white/10 rounded-[var(--radius-button)] text-[var(--text-primary)] text-sm"
                       />
                     </div>
-                    <div className="grid grid-cols-2 gap-4">
+                    <div className="grid grid-cols-2 gap-5">
                       <div>
-                        <label className="block text-xs font-semibold text-[var(--text-metric-label)] tracking-wider mb-1">
+                        <label className="block text-xs font-semibold text-[var(--text-metric-label)] tracking-wider mb-2">
                           Weight (kg)
                         </label>
                         <input
@@ -232,11 +229,11 @@ export default function EntriesPage() {
                               e.target.value
                             )
                           }
-                          className="w-full px-3 py-2 bg-[var(--bg-primary)] border border-white/10 rounded-[var(--radius-button)] text-[var(--text-primary)] text-sm tabular-nums"
+                          className="w-full px-4 py-3 bg-[var(--bg-primary)] border border-white/10 rounded-[var(--radius-button)] text-[var(--text-primary)] text-sm tabular-nums"
                         />
                       </div>
                       <div>
-                        <label className="block text-xs font-semibold text-[var(--text-metric-label)] tracking-wider mb-1">
+                        <label className="block text-xs font-semibold text-[var(--text-metric-label)] tracking-wider mb-2">
                           Muscle (kg)
                         </label>
                         <input
@@ -250,11 +247,11 @@ export default function EntriesPage() {
                               e.target.value
                             )
                           }
-                          className="w-full px-3 py-2 bg-[var(--bg-primary)] border border-white/10 rounded-[var(--radius-button)] text-[var(--text-primary)] text-sm tabular-nums"
+                          className="w-full px-4 py-3 bg-[var(--bg-primary)] border border-white/10 rounded-[var(--radius-button)] text-[var(--text-primary)] text-sm tabular-nums"
                         />
                       </div>
                       <div>
-                        <label className="block text-xs font-semibold text-[var(--text-metric-label)] tracking-wider mb-1">
+                        <label className="block text-xs font-semibold text-[var(--text-metric-label)] tracking-wider mb-2">
                           Fat mass (kg)
                         </label>
                         <input
@@ -268,11 +265,11 @@ export default function EntriesPage() {
                               e.target.value
                             )
                           }
-                          className="w-full px-3 py-2 bg-[var(--bg-primary)] border border-white/10 rounded-[var(--radius-button)] text-[var(--text-primary)] text-sm tabular-nums"
+                          className="w-full px-4 py-3 bg-[var(--bg-primary)] border border-white/10 rounded-[var(--radius-button)] text-[var(--text-primary)] text-sm tabular-nums"
                         />
                       </div>
                       <div>
-                        <label className="block text-xs font-semibold text-[var(--text-metric-label)] tracking-wider mb-1">
+                        <label className="block text-xs font-semibold text-[var(--text-metric-label)] tracking-wider mb-2">
                           Body fat (%)
                         </label>
                         <input
@@ -286,14 +283,14 @@ export default function EntriesPage() {
                               e.target.value
                             )
                           }
-                          className="w-full px-3 py-2 bg-[var(--bg-primary)] border border-white/10 rounded-[var(--radius-button)] text-[var(--text-primary)] text-sm tabular-nums"
+                          className="w-full px-4 py-3 bg-[var(--bg-primary)] border border-white/10 rounded-[var(--radius-button)] text-[var(--text-primary)] text-sm tabular-nums"
                         />
                       </div>
                     </div>
                     <button
                       onClick={() => handleSave(entry.id)}
                       disabled={savingId === entry.id}
-                      className="flex items-center gap-2 bg-[var(--color-weight)] text-[#121212] px-4 py-2.5 rounded-[var(--radius-button)] font-semibold text-sm hover:brightness-110 disabled:opacity-50 transition-all"
+                      className="flex items-center gap-2 bg-[var(--color-weight)] text-[#121212] px-5 py-3 rounded-[var(--radius-button)] font-semibold text-sm hover:brightness-110 disabled:opacity-50 transition-all"
                     >
                       {savingId === entry.id ? "Saving..." : "Save"}
                     </button>
@@ -305,16 +302,16 @@ export default function EntriesPage() {
           </div>
 
           {entries.length === 0 && (
-            <div className="text-center py-12">
+            <div className="text-center py-16">
               <p className="text-[var(--text-primary)] font-medium">
                 No entries yet
               </p>
-              <p className="text-[var(--text-secondary)] text-sm mt-1">
+              <p className="text-[var(--text-secondary)] text-sm mt-2">
                 Track your body composition from the dashboard — add your first weigh-in to get started.
               </p>
               <Link
                 href="/"
-                className="inline-flex items-center gap-2 mt-4 bg-[var(--color-weight)] text-[#121212] px-5 py-2.5 rounded-[var(--radius-button)] font-semibold text-sm hover:brightness-110 transition-all"
+                className="inline-flex items-center gap-2 mt-6 bg-[var(--color-weight)] text-[#121212] px-5 py-2.5 rounded-[var(--radius-button)] font-semibold text-sm hover:brightness-110 transition-all"
               >
                 Back to dashboard
               </Link>
@@ -322,6 +319,14 @@ export default function EntriesPage() {
           )}
         </div>
       </div>
+
+      <ConfirmModal
+        isOpen={isClearConfirmOpen}
+        onClose={() => setIsClearConfirmOpen(false)}
+        onConfirm={handleClearAllConfirm}
+        message="Clear all stored data? This cannot be undone. Export from the dashboard first if you want to keep a copy."
+        confirmLabel="Delete data"
+      />
     </div>
   );
 }

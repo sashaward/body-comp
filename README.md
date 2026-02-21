@@ -1,4 +1,4 @@
-# Performance Lab - Body Composition Tracker
+# Body Composition Tracker
 
 A minimalist, performance-driven body composition dashboard for tracking body weight, skeletal muscle mass, body fat mass, and body fat percentage. All data is stored locally on your device.
 
@@ -77,12 +77,15 @@ src/
 
 ## Data Storage
 
-All body composition data is stored in your browser's localStorage under the key `body-comp-entries`. This means:
+All body composition data is stored in your browser's localStorage under the key `body-comp-entries`. **There is no data in the codebase**—the app ships completely empty. Each visitor's data stays only in their own browser.
 
 - **Privacy**: Your data never leaves your device
 - **No account required**: Start tracking immediately
-- **Persistence**: Data survives browser restarts
-- **Portability**: Export by copying localStorage data
+- **Persistence**: Data survives browser restarts (localStorage)
+- **Portability**: Export via CSV from the dashboard
+- **Reset**: Use the trash icon in the footer to clear all data and start fresh
+
+**New visitors** always see an empty state. To test as a new user: use the Clear data button (trash icon), or open the site in an incognito/private window.
 
 ### Data Format
 
@@ -90,12 +93,12 @@ Each entry contains:
 ```json
 {
   "id": "unique-id",
-  "date": "2024-02-16",
-  "bodyWeight": 81.8,
-  "skeletalMuscleMass": 37.1,
-  "bodyFatMass": 15.3,
-  "bodyFatPercentage": 18.7,
-  "createdAt": "2024-02-16T10:30:00.000Z"
+  "date": "YYYY-MM-DD",
+  "bodyWeight": 0,
+  "skeletalMuscleMass": 0,
+  "bodyFatMass": 0,
+  "bodyFatPercentage": 0,
+  "createdAt": "ISO8601-timestamp"
 }
 ```
 
