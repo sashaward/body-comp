@@ -1,11 +1,11 @@
 "use client";
 
 import { useState, useEffect, useCallback } from "react";
-import Link from "next/link";
 import { ChevronDownIcon } from "@/components/icons/Icons";
 import EntriesHeader from "@/components/EntriesHeader";
 import ConfirmModal from "@/components/ConfirmModal";
-import { getEntries, updateEntry, clearAllEntries, BodyEntry } from "@/lib/storage";
+import WeighInModal from "@/components/WeighInModal";
+import { getEntries, updateEntry, clearAllEntries, saveEntry, BodyEntry } from "@/lib/storage";
 import { format } from "date-fns";
 
 export default function EntriesPage() {
@@ -17,6 +17,7 @@ export default function EntriesPage() {
   const [savingId, setSavingId] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [isClearConfirmOpen, setIsClearConfirmOpen] = useState(false);
+  const [isWeighInModalOpen, setIsWeighInModalOpen] = useState(false);
 
   const fetchEntries = useCallback(() => {
     const data = getEntries();
@@ -142,6 +143,17 @@ export default function EntriesPage() {
   };
 
   const handleClearAllClick = () => setIsClearConfirmOpen(true);
+
+  const handleSaveEntry = async (data: {
+    date: string;
+    bodyWeight: number;
+    skeletalMuscleMass: number;
+    bodyFatMass: number;
+    bodyFatPercentage: number;
+  }) => {
+    saveEntry(data);
+    fetchEntries();
+  };
 
   const handleClearAllConfirm = () => {
     clearAllEntries();
@@ -309,12 +321,13 @@ export default function EntriesPage() {
               <p className="text-[var(--text-secondary)] text-sm mt-2">
                 Track your body composition from the dashboard — add your first weigh-in to get started.
               </p>
-              <Link
-                href="/"
+              <button
+                type="button"
+                onClick={() => setIsWeighInModalOpen(true)}
                 className="inline-flex items-center gap-2 mt-6 bg-[var(--color-weight)] text-[#121212] px-5 py-2.5 rounded-[var(--radius-button)] font-semibold text-sm hover:brightness-110 transition-all"
               >
-                Back to dashboard
-              </Link>
+                Add first weigh-in
+              </button>
             </div>
           )}
         </div>
@@ -326,6 +339,12 @@ export default function EntriesPage() {
         onConfirm={handleClearAllConfirm}
         message="Clear all stored data? This cannot be undone. Export from the dashboard first if you want to keep a copy."
         confirmLabel="Delete data"
+      />
+
+      <WeighInModal
+        isOpen={isWeighInModalOpen}
+        onClose={() => setIsWeighInModalOpen(false)}
+        onSave={handleSaveEntry}
       />
     </div>
   );
