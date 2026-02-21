@@ -1,9 +1,14 @@
 "use client";
 
 import Link from "next/link";
-import { ChevronLeftIcon } from "@/components/icons/Icons";
+import { ChevronLeftIcon, TrashIcon } from "@/components/icons/Icons";
 
-export default function EntriesHeader() {
+interface EntriesHeaderProps {
+  onClearAll?: () => void;
+  hasEntries?: boolean;
+}
+
+export default function EntriesHeader({ onClearAll, hasEntries }: EntriesHeaderProps) {
   return (
     <div className="flex items-center justify-between">
       <Link
@@ -16,7 +21,18 @@ export default function EntriesHeader() {
       <h1 className="text-lg font-semibold text-[var(--text-primary)]">
         All entries
       </h1>
-      <div className="w-20" />
+      {hasEntries && onClearAll ? (
+        <button
+          type="button"
+          onClick={onClearAll}
+          title="Clear all data"
+          className="p-2 text-[var(--text-secondary)] hover:text-[var(--delta-negative)] hover:bg-white/5 rounded-[var(--radius-button)] transition-all"
+        >
+          <TrashIcon className="w-5 h-5" />
+        </button>
+      ) : (
+        <div className="w-9" />
+      )}
     </div>
   );
 }

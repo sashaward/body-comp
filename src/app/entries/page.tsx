@@ -4,7 +4,8 @@ import { useState, useEffect, useCallback } from "react";
 import Link from "next/link";
 import { ChevronDownIcon } from "@/components/icons/Icons";
 import EntriesHeader from "@/components/EntriesHeader";
-import { getEntries, updateEntry, BodyEntry } from "@/lib/storage";
+import ConfirmModal from "@/components/ConfirmModal";
+import { getEntries, updateEntry, clearAllEntries, BodyEntry } from "@/lib/storage";
 import { format } from "date-fns";
 
 export default function EntriesPage() {
@@ -15,6 +16,7 @@ export default function EntriesPage() {
   const [editing, setEditing] = useState<Record<string, Partial<BodyEntry>>>({});
   const [savingId, setSavingId] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
+  const [isClearConfirmOpen, setIsClearConfirmOpen] = useState(false);
 
   const fetchEntries = useCallback(() => {
     const data = getEntries();
@@ -139,11 +141,21 @@ export default function EntriesPage() {
     }
   };
 
+  const handleClearAllClick = () => setIsClearConfirmOpen(true);
+
+  const handleClearAllConfirm = () => {
+    clearAllEntries();
+    fetchEntries();
+  };
+
   return (
     <div className="min-h-screen p-6 sm:p-10 bg-black/70 backdrop-blur-md">
       <div className="max-w-2xl mx-auto">
         <div className="rounded-[var(--radius-card)] p-8 sm:p-10 space-y-8 opacity-0 animate-fade-in bg-[var(--bg-card)] border border-white/[0.06] shadow-[var(--shadow-card)]">
-          <EntriesHeader />
+          <EntriesHeader
+            onClearAll={handleClearAllClick}
+            hasEntries={entries.length > 0}
+          />
 
           {error && (
             <div className="p-4 bg-[var(--glass-active-bg)] border border-[var(--delta-negative)]/30 rounded-[var(--radius-button)] text-sm text-[var(--delta-negative)]">
@@ -307,6 +319,14 @@ export default function EntriesPage() {
           )}
         </div>
       </div>
+
+      <ConfirmModal
+        isOpen={isClearConfirmOpen}
+        onClose={() => setIsClearConfirmOpen(false)}
+        onConfirm={handleClearAllConfirm}
+        message="Clear all stored data? This cannot be undone. Export from the dashboard first if you want to keep a copy."
+        confirmLabel="Delete data"
+      />
     </div>
   );
 }

@@ -55,6 +55,33 @@ const timeRanges: Record<TimeRange, { label: string; days: number | null }> = {
   all: { label: "ALL", days: null },
 };
 
+// Placeholder data for blurred empty-state background
+const placeholderChartData = (() => {
+  const points = 10;
+  const baseDate = new Date();
+  return Array.from({ length: points }, (_, i) => {
+    const d = new Date(baseDate);
+    d.setMonth(d.getMonth() - (points - 1 - i));
+    const date = format(d, "yyyy-MM-dd");
+    const weight = 78 + Math.sin(i * 0.8) * 2.5;
+    const fatPercent = 17 + Math.sin(i * 0.5) * 2;
+    const fatMass = (weight * fatPercent) / 100;
+    const muscle = 35 + i * 0.2;
+    const other = Math.max(0, weight - muscle - fatMass);
+    return {
+      date,
+      formattedDate: format(d, "MMM yy"),
+      weight,
+      muscle,
+      fatMass,
+      other,
+      nonFat: Math.max(0, weight - fatMass),
+      nonMuscle: Math.max(0, weight - muscle),
+      fatPercent,
+    };
+  });
+})();
+
 export default function BiometricChart({
   entries,
   activeMetrics,
@@ -432,22 +459,94 @@ export default function BiometricChart({
           </ResponsiveContainer>
         </div>
       ) : (
-        <div className="h-80 flex items-center justify-center">
-          <div className="text-center bg-[var(--bg-elevated)] rounded-[var(--radius-metric)] px-10 py-12 border border-white/[0.08] max-w-sm">
-            <h3 className="text-lg font-semibold text-[var(--text-primary)]">
-              Track your body composition
-            </h3>
-            <p className="text-[var(--text-secondary)] text-sm mt-3 leading-relaxed">
-              Log weight, muscle mass, and body fat over time. See how your composition changes—not just the number on the scale.
-            </p>
-            {onLogWeighIn && (
-              <button
-                onClick={onLogWeighIn}
-                className="mt-8 flex items-center gap-2 bg-[var(--color-weight)] text-[#121212] px-6 py-3 rounded-[var(--radius-button)] font-semibold text-sm hover:brightness-110 transition-all shadow-[0_4px_24px_rgba(255,214,10,0.25)] mx-auto"
+        <div className="relative h-80 w-full min-w-0 overflow-hidden rounded-[var(--radius-metric)]">
+          {/* Blurred chart background */}
+          <div
+            className="absolute inset-0 opacity-40 blur-2xl pointer-events-none select-none"
+            aria-hidden
+          >
+            <ResponsiveContainer width="100%" height="100%" className="chart-no-bottom-grid">
+              <ComposedChart
+                data={placeholderChartData}
+                margin={{ top: 10, right: 80, left: 10, bottom: 25 }}
+                barCategoryGap="20%"
+                barSize={24}
               >
-                Add your first weigh-in
-              </button>
-            )}
+                <CartesianGrid
+                  strokeDasharray="4 14"
+                  stroke="rgba(255,255,255,0.08)"
+                  strokeLinecap="round"
+                  vertical={false}
+                />
+                <XAxis
+                  dataKey="formattedDate"
+                  tick={{ fontSize: 11, fill: "#A0A0A0" }}
+                  tickLine={false}
+                  axisLine={{ stroke: "transparent", strokeWidth: 0 }}
+                  dy={10}
+                />
+                <YAxis
+                  yAxisId="left"
+                  tick={{ fontSize: 11, fill: "#A0A0A0" }}
+                  tickLine={false}
+                  axisLine={false}
+                  domain={[0, "auto"]}
+                />
+                <YAxis
+                  yAxisId="right"
+                  orientation="right"
+                  tick={{ fontSize: 11, fill: metrics.fatPercent.color }}
+                  tickLine={false}
+                  axisLine={false}
+                  domain={[0, 25]}
+                  tickFormatter={(v) => `${v}%`}
+                />
+                <BarStack stackId="composition" radius={12}>
+                  <Bar yAxisId="left" dataKey="muscle" fill={metrics.muscle.color} isAnimationActive={false} />
+                  <Bar yAxisId="left" dataKey="fatMass" fill={metrics.fatMass.color} isAnimationActive={false} />
+                  <Bar yAxisId="left" dataKey="other" fill={otherMassColor} isAnimationActive={false} />
+                </BarStack>
+                <Line
+                  yAxisId="left"
+                  type="monotone"
+                  dataKey="weight"
+                  stroke={metrics.weight.color}
+                  strokeWidth={2.5}
+                  dot={false}
+                  isAnimationActive={false}
+                />
+                <Line
+                  yAxisId="right"
+                  type="monotone"
+                  dataKey="fatPercent"
+                  stroke={metrics.fatPercent.color}
+                  strokeWidth={2.5}
+                  strokeDasharray="5 5"
+                  dot={false}
+                  isAnimationActive={false}
+                />
+              </ComposedChart>
+            </ResponsiveContainer>
+          </div>
+
+          {/* Empty state overlay */}
+          <div className="relative flex items-center justify-center h-full">
+            <div className="text-center bg-[var(--bg-elevated)]/90 backdrop-blur-md rounded-[var(--radius-metric)] px-10 py-12 border border-white/[0.08] max-w-sm shadow-[0_8px_32px_rgba(0,0,0,0.4)]">
+              <h3 className="text-lg font-semibold text-[var(--text-primary)]">
+                Track your body composition
+              </h3>
+              <p className="text-[var(--text-secondary)] text-sm mt-3 leading-relaxed">
+                Log weight, muscle mass, and body fat over time. See how your composition changes—not just the number on the scale.
+              </p>
+              {onLogWeighIn && (
+                <button
+                  onClick={onLogWeighIn}
+                  className="mt-8 flex items-center gap-2 bg-[var(--color-weight)] text-[#121212] px-6 py-3 rounded-[var(--radius-button)] font-semibold text-sm hover:brightness-110 transition-all shadow-[0_4px_24px_rgba(255,214,10,0.25)] mx-auto"
+                >
+                  Add your first weigh-in
+                </button>
+              )}
+            </div>
           </div>
         </div>
       )}

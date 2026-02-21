@@ -5,8 +5,9 @@ import Header from "./Header";
 import MetricCard from "./MetricCard";
 import BiometricChart from "./BiometricChart";
 import WeighInModal from "./WeighInModal";
-import { getEntries, saveEntry, BodyEntry } from "@/lib/storage";
-import { DownloadIcon, StarIcon } from "./icons/Icons";
+import ConfirmModal from "./ConfirmModal";
+import { getEntries, saveEntry, clearAllEntries, BodyEntry } from "@/lib/storage";
+import { DownloadIcon, StarIcon, TrashIcon } from "./icons/Icons";
 
 type MetricKey = "weight" | "muscle" | "fatMass" | "fatPercent";
 
@@ -14,6 +15,7 @@ export default function Dashboard() {
   const [entries, setEntries] = useState<BodyEntry[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isClearConfirmOpen, setIsClearConfirmOpen] = useState(false);
   const [activeMetrics, setActiveMetrics] = useState<MetricKey[]>([
     "weight",
     "muscle",
@@ -51,6 +53,13 @@ export default function Dashboard() {
     bodyFatPercentage: number;
   }) => {
     saveEntry(data);
+    fetchEntries();
+  };
+
+  const handleClearDataClick = () => setIsClearConfirmOpen(true);
+
+  const handleClearDataConfirm = () => {
+    clearAllEntries();
     fetchEntries();
   };
 
@@ -201,23 +210,36 @@ export default function Dashboard() {
 
         {/* Footer */}
         <footer className="flex items-center justify-between py-4 text-xs">
-          <span className="tracking-wider font-normal text-[var(--text-secondary)]">
-            Information stored locally
-          </span>
-          <div className="flex items-center gap-1">
+          <div className="flex items-center gap-2">
             <button
               type="button"
               onClick={handleExportCsv}
               title="Export CSV"
-              className="p-3 text-[var(--text-secondary)] hover:text-[var(--text-primary)] hover:bg-white/5 rounded-[var(--radius-button)] transition-all"
+              disabled={entries.length === 0}
+              className="p-3 text-[var(--text-secondary)] hover:text-[var(--text-primary)] hover:bg-white/5 rounded-[var(--radius-button)] transition-all disabled:opacity-40 disabled:cursor-not-allowed"
             >
               <DownloadIcon className="w-5 h-5" />
             </button>
+            <span className="tracking-wider font-normal text-[var(--text-secondary)]">
+              Information stored locally
+            </span>
+          </div>
+          <div className="flex items-center gap-1">
+            {entries.length > 0 && (
+              <button
+                type="button"
+                onClick={handleClearDataClick}
+                title="Clear all data"
+                className="p-3 text-[var(--text-secondary)] hover:text-[var(--delta-negative)] hover:bg-white/5 rounded-[var(--radius-button)] transition-all"
+              >
+                <TrashIcon className="w-5 h-5" />
+              </button>
+            )}
             <a
-              href="https://sashaward.me"
+              href="https://github.com/sashaward/body-comp"
               target="_blank"
               rel="noopener noreferrer"
-              title="Leave feedback"
+              title="View on GitHub"
               className="p-3 text-[var(--text-secondary)] hover:text-[var(--text-primary)] hover:bg-white/5 rounded-[var(--radius-button)] transition-all"
             >
               <StarIcon className="w-5 h-5" />
@@ -231,6 +253,14 @@ export default function Dashboard() {
         isOpen={isModalOpen}
         onClose={() => setIsModalOpen(false)}
         onSave={handleSaveEntry}
+      />
+
+      <ConfirmModal
+        isOpen={isClearConfirmOpen}
+        onClose={() => setIsClearConfirmOpen(false)}
+        onConfirm={handleClearDataConfirm}
+        message="Clear all stored data? This cannot be undone. Export first if you want to keep a copy."
+        confirmLabel="Delete data"
       />
     </div>
   );
