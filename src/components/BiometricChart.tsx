@@ -49,10 +49,10 @@ const SolidActiveDot = (props: React.SVGProps<SVGCircleElement>) => {
 };
 
 const timeRanges: Record<TimeRange, { label: string; days: number | null }> = {
-  "3m": { label: "3m", days: 90 },
-  "6m": { label: "6m", days: 180 },
-  "1y": { label: "1y", days: 365 },
-  all: { label: "All", days: null },
+  "3m": { label: "3M", days: 90 },
+  "6m": { label: "6M", days: 180 },
+  "1y": { label: "1Y", days: 365 },
+  all: { label: "ALL", days: null },
 };
 
 export default function BiometricChart({
@@ -170,11 +170,11 @@ export default function BiometricChart({
     const showMuscleOnly = showMuscle && !showFatMass;
 
     return (
-      <div className="bg-[var(--bg-elevated)] backdrop-blur-xl rounded-[var(--radius-metric)] shadow-[0_8px_32px_rgba(0,0,0,0.4)] border border-white/[0.08] p-3 min-w-[160px]">
-        <p className="text-xs font-medium text-[var(--text-secondary)] mb-2 pb-2 border-b border-white/10">
+      <div className="bg-[var(--bg-elevated)] backdrop-blur-xl rounded-[var(--radius-metric)] shadow-[0_8px_32px_rgba(0,0,0,0.4)] border border-white/[0.08] p-4 min-w-[160px]">
+        <p className="text-xs font-medium text-[var(--text-secondary)] mb-2.5 pb-2.5 border-b border-white/10">
           {format(parseISO(data.date), "MMMM d, yyyy")}
         </p>
-        <div className="space-y-1.5">
+        <div className="space-y-2">
           {showWeight && !showFatMassOnly && !showMuscleOnly && (
             <div className="flex items-center justify-between gap-4">
               <div className="flex items-center gap-2">
@@ -244,7 +244,7 @@ export default function BiometricChart({
   return (
     <div className="opacity-0 animate-slide-up stagger-5">
       {/* Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-6">
+      <div className="flex flex-col sm:flex-row items-start sm:justify-between gap-5 mt-12 mb-8">
         <div>
           <h2 className="text-lg font-semibold text-[var(--text-primary)]">
             Progress
@@ -252,14 +252,14 @@ export default function BiometricChart({
         </div>
 
         {/* Time range selector */}
-      <div className="flex flex-wrap gap-2 mb-6">
+      <div className="flex flex-wrap gap-1.5 mb-8">
         {(Object.keys(timeRanges) as TimeRange[]).map((range) => {
           const isSelected = timeRange === range;
           return (
             <button
               key={range}
               onClick={() => handleTimeRangeClick(range)}
-              className={`px-4 py-2 rounded-full text-xs font-bold transition-all ${
+              className={`w-14 min-w-14 py-2.5 rounded-full text-xs font-bold transition-all text-center ${
                 isSelected
                   ? "bg-[var(--glass-active-bg)] text-[var(--text-primary)] border border-white/10 shadow-[0_2px_12px_rgba(0,0,0,0.2)]"
                   : "bg-transparent text-[var(--text-secondary)] hover:bg-white/5 hover:border hover:border-white/5"
@@ -433,17 +433,17 @@ export default function BiometricChart({
         </div>
       ) : (
         <div className="h-80 flex items-center justify-center">
-          <div className="text-center bg-[var(--bg-elevated)] rounded-[var(--radius-metric)] px-8 py-10 border border-white/[0.08] max-w-sm">
+          <div className="text-center bg-[var(--bg-elevated)] rounded-[var(--radius-metric)] px-10 py-12 border border-white/[0.08] max-w-sm">
             <h3 className="text-lg font-semibold text-[var(--text-primary)]">
               Track your body composition
             </h3>
-            <p className="text-[var(--text-secondary)] text-sm mt-2 leading-relaxed">
+            <p className="text-[var(--text-secondary)] text-sm mt-3 leading-relaxed">
               Log weight, muscle mass, and body fat over time. See how your composition changes—not just the number on the scale.
             </p>
             {onLogWeighIn && (
               <button
                 onClick={onLogWeighIn}
-                className="mt-6 flex items-center gap-2 bg-[var(--color-weight)] text-[#121212] px-6 py-3 rounded-[var(--radius-button)] font-semibold text-sm hover:brightness-110 transition-all shadow-[0_4px_24px_rgba(255,214,10,0.25)] mx-auto"
+                className="mt-8 flex items-center gap-2 bg-[var(--color-weight)] text-[#121212] px-6 py-3 rounded-[var(--radius-button)] font-semibold text-sm hover:brightness-110 transition-all shadow-[0_4px_24px_rgba(255,214,10,0.25)] mx-auto"
               >
                 Add your first weigh-in
               </button>

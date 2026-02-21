@@ -6,6 +6,7 @@ import MetricCard from "./MetricCard";
 import BiometricChart from "./BiometricChart";
 import WeighInModal from "./WeighInModal";
 import { getEntries, saveEntry, BodyEntry } from "@/lib/storage";
+import { DownloadIcon, StarIcon } from "./icons/Icons";
 
 type MetricKey = "weight" | "muscle" | "fatMass" | "fatPercent";
 
@@ -51,6 +52,26 @@ export default function Dashboard() {
   }) => {
     saveEntry(data);
     fetchEntries();
+  };
+
+  const handleExportCsv = () => {
+    const data = getEntries();
+    if (data.length === 0) return;
+
+    const headers = ["Date", "Weight (kg)", "Muscle Mass (kg)", "Body Fat Mass (kg)", "Body Fat (%)"];
+    const rows = data
+      .sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime())
+      .map((e) =>
+        [e.date, e.bodyWeight, e.skeletalMuscleMass, e.bodyFatMass, e.bodyFatPercentage].join(",")
+      );
+    const csv = [headers.join(","), ...rows].join("\n");
+    const blob = new Blob([csv], { type: "text/csv;charset=utf-8;" });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = `body-comp-export-${new Date().toISOString().slice(0, 10)}.csv`;
+    a.click();
+    URL.revokeObjectURL(url);
   };
 
   // Calculate metrics from entries
@@ -103,20 +124,18 @@ export default function Dashboard() {
 
   if (isLoading) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-[var(--bg-primary)]">
-        <div className="w-8 h-8 border-2 border-[var(--color-weight)] border-t-transparent rounded-full animate-spin" />
+      <div className="min-h-screen flex items-center justify-center bg-blue-950/30">
+        <div className="w-8 h-8 border-2 border-blue-500 border-t-transparent rounded-full animate-spin" />
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen p-4 sm:p-8 bg-[var(--bg-primary)]">
-      <div className="max-w-6xl mx-auto">
-        {/* Unified card container - frosted glass */}
+    <div className="min-h-screen pt-10 pb-4 px-4 sm:pt-12 sm:pb-6 sm:px-6 bg-[var(--bg-primary)]">
+      <div className="max-w-6xl mx-auto space-y-4">
+        {/* Main content container */}
         <div className="rounded-[var(--radius-card)] p-6 sm:p-8 space-y-6 opacity-0 animate-fade-in bg-[var(--bg-card)] border border-white/[0.06] shadow-[var(--shadow-card)]">
-          {/* Header */}
           <Header onLogWeighIn={() => setIsModalOpen(true)} />
-
           {/* Metric Cards - tap to toggle visibility on graph */}
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
             <div className="stagger-1">
@@ -181,18 +200,29 @@ export default function Dashboard() {
         </div>
 
         {/* Footer */}
-        <footer className="flex items-center justify-between py-4 text-xs text-[var(--text-secondary)] mt-6">
-          <span className="tracking-wider font-normal">
-            Stored locally
+        <footer className="flex items-center justify-between py-4 text-xs">
+          <span className="tracking-wider font-normal text-[var(--text-secondary)]">
+            Information stored locally
           </span>
-          <a
-            href="https://sashaward.me"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="tracking-wider font-normal hover:text-[var(--text-primary)] transition-colors"
-          >
-            Leave feedback
-          </a>
+          <div className="flex items-center gap-1">
+            <button
+              type="button"
+              onClick={handleExportCsv}
+              title="Export CSV"
+              className="p-3 text-[var(--text-secondary)] hover:text-[var(--text-primary)] hover:bg-white/5 rounded-[var(--radius-button)] transition-all"
+            >
+              <DownloadIcon className="w-5 h-5" />
+            </button>
+            <a
+              href="https://sashaward.me"
+              target="_blank"
+              rel="noopener noreferrer"
+              title="Leave feedback"
+              className="p-3 text-[var(--text-secondary)] hover:text-[var(--text-primary)] hover:bg-white/5 rounded-[var(--radius-button)] transition-all"
+            >
+              <StarIcon className="w-5 h-5" />
+            </a>
+          </div>
         </footer>
       </div>
 
