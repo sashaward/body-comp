@@ -36,7 +36,7 @@ npm install
 npm run dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) in your browser.
+Open [http://localhost:3000/body-comp](http://localhost:3000/body-comp) in your browser (required for GitHub Pages basePath).
 
 ### Build for Production
 
@@ -44,7 +44,13 @@ Open [http://localhost:3000](http://localhost:3000) in your browser.
 npm run build
 ```
 
-The static site is output to the `out/` directory. Serve it with any static file server.
+The static site is output to the `out/` directory. To preview the production build locally (with correct basePath):
+
+```bash
+npm run preview
+```
+
+Then open [http://localhost:3000/body-comp](http://localhost:3000/body-comp).
 
 ## Deploy to GitHub Pages
 

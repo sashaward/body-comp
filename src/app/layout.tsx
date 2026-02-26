@@ -1,9 +1,16 @@
 import type { Metadata } from "next";
+import { basePath } from "@/lib/config";
 import "./globals.css";
+import PageTransition from "@/components/PageTransition";
 
 export const metadata: Metadata = {
   title: "BodyComp | Track your progress",
   description: "Track and visualize changes in body weight, skeletal muscle mass, body fat mass, and body fat percentage.",
+  icons: {
+    icon: `${basePath}/icon.png`,
+    shortcut: `${basePath}/icon.png`,
+    apple: `${basePath}/icon.png`,
+  },
 };
 
 export default function RootLayout({
@@ -21,8 +28,10 @@ export default function RootLayout({
           rel="stylesheet"
         />
       </head>
-      <body className="antialiased">
-        {children}
+      <body className="antialiased min-h-screen">
+        <div className="relative z-10 min-h-screen">
+          <PageTransition>{children}</PageTransition>
+        </div>
       </body>
     </html>
   );

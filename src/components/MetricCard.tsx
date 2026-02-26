@@ -18,10 +18,10 @@ interface MetricCardProps {
 }
 
 const colorConfig: Record<string, { inner: string; outer: string }> = {
-  weight: { inner: "#FFD60A", outer: "rgba(255, 214, 10, 0.25)" },
-  muscle: { inner: "#A855F7", outer: "rgba(168, 85, 247, 0.25)" },
-  fatMass: { inner: "#40E0D0", outer: "rgba(64, 224, 208, 0.25)" },
-  fatPercent: { inner: "#5DD39E", outer: "rgba(93, 211, 158, 0.25)" },
+  weight: { inner: "#FFB347", outer: "rgba(255, 179, 71, 0.3)" },
+  muscle: { inner: "#00B2B2", outer: "rgba(0, 178, 178, 0.3)" },
+  fatMass: { inner: "#00D4AA", outer: "rgba(0, 212, 170, 0.3)" },
+  fatPercent: { inner: "#5DD39E", outer: "rgba(93, 211, 158, 0.3)" },
 };
 
 export default function MetricCard({
@@ -76,7 +76,7 @@ export default function MetricCard({
       }`}
       style={
         isActive && isSoleActive
-          ? { boxShadow: `0 0 0 1px ${outer}` }
+          ? { boxShadow: `0 0 0 2px ${outer}, 0 0 20px ${outer}` }
           : undefined
       }
     >
@@ -91,13 +91,13 @@ export default function MetricCard({
         <div
           className="w-6 h-6 rounded-full flex items-center justify-center shrink-0 transition-colors duration-300"
           style={{
-            backgroundColor: isActive ? outer : "rgba(255,255,255,0.08)",
+            backgroundColor: isActive ? outer : "rgba(255,255,255,0.06)",
           }}
         >
           <div
             className="w-2 h-2 rounded-full transition-colors duration-300"
             style={{
-              backgroundColor: isActive ? inner : "#6B6B6B",
+              backgroundColor: isActive ? inner : "#6B7F86",
             }}
           />
         </div>

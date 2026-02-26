@@ -161,9 +161,9 @@ export default function EntriesPage() {
   };
 
   return (
-    <div className="min-h-screen p-6 sm:p-10 bg-black/70 backdrop-blur-md">
+    <div className="min-h-screen p-6 sm:p-10">
       <div className="max-w-2xl mx-auto">
-        <div className="rounded-[var(--radius-card)] p-8 sm:p-10 space-y-8 opacity-0 animate-fade-in bg-[var(--bg-card)] border border-white/[0.06] shadow-[var(--shadow-card)]">
+        <div className="rounded-[var(--radius-card)] p-8 sm:p-10 space-y-8 opacity-0 animate-fade-in glass border border-white/[0.08] shadow-[var(--shadow-card)]">
           <EntriesHeader
             onClearAll={handleClearAllClick}
             hasEntries={entries.length > 0}
@@ -302,7 +302,7 @@ export default function EntriesPage() {
                     <button
                       onClick={() => handleSave(entry.id)}
                       disabled={savingId === entry.id}
-                      className="flex items-center gap-2 bg-[var(--color-weight)] text-[#121212] px-5 py-3 rounded-[var(--radius-button)] font-semibold text-sm hover:brightness-110 disabled:opacity-50 transition-all"
+                      className="flex items-center gap-2 bg-[var(--color-accent)] text-[#0F1A1E] px-5 py-3 rounded-[var(--radius-button)] font-semibold text-sm hover:brightness-110 disabled:opacity-50 transition-all shadow-[var(--shadow-accent)]"
                     >
                       {savingId === entry.id ? "Saving..." : "Save"}
                     </button>
@@ -324,7 +324,7 @@ export default function EntriesPage() {
               <button
                 type="button"
                 onClick={() => setIsWeighInModalOpen(true)}
-                className="inline-flex items-center gap-2 mt-6 bg-[var(--color-weight)] text-[#121212] px-5 py-2.5 rounded-[var(--radius-button)] font-semibold text-sm hover:brightness-110 transition-all"
+                className="inline-flex items-center gap-2 mt-6 bg-[var(--color-accent)] text-[#0F1A1E] px-5 py-2.5 rounded-[var(--radius-button)] font-semibold text-sm hover:brightness-110 transition-all shadow-[var(--shadow-accent)]"
               >
                 Add first weigh-in
               </button>

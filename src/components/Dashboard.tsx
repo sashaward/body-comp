@@ -133,17 +133,17 @@ export default function Dashboard() {
 
   if (isLoading) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-blue-950/30">
-        <div className="w-8 h-8 border-2 border-blue-500 border-t-transparent rounded-full animate-spin" />
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="w-8 h-8 border-2 border-[var(--color-accent)] border-t-transparent rounded-full animate-spin" />
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen pt-10 pb-4 px-4 sm:pt-12 sm:pb-6 sm:px-6 bg-[var(--bg-primary)]">
+    <div className="min-h-screen pt-10 pb-4 px-4 sm:pt-12 sm:pb-6 sm:px-6">
       <div className="max-w-6xl mx-auto space-y-4">
         {/* Main content container */}
-        <div className="rounded-[var(--radius-card)] p-6 sm:p-8 space-y-6 opacity-0 animate-fade-in bg-[var(--bg-card)] border border-white/[0.06] shadow-[var(--shadow-card)]">
+        <div className="rounded-[var(--radius-card)] p-6 sm:p-8 space-y-6 opacity-0 animate-fade-in glass border border-white/[0.08] shadow-[var(--shadow-card)]">
           <Header onLogWeighIn={() => setIsModalOpen(true)} />
           {/* Metric Cards - tap to toggle visibility on graph */}
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
