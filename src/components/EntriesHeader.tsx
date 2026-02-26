@@ -13,7 +13,7 @@ export default function EntriesHeader({ onClearAll, hasEntries }: EntriesHeaderP
     <div className="flex items-center justify-between">
       <Link
         href="/"
-        className="flex items-center gap-2 text-[var(--text-secondary)] hover:text-[var(--text-primary)] transition-colors"
+        className="flex items-center gap-2 text-[var(--text-secondary)] hover:text-[var(--text-primary)] transition-all duration-300 ease-out active:scale-[0.98] rounded-[var(--radius-button)] py-1 px-2 -ml-2 hover:bg-white/5"
       >
         <ChevronLeftIcon className="w-5 h-5" />
         <span className="text-sm font-medium tracking-wider">Back</span>

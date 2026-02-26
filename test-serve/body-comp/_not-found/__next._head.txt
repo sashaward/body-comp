@@ -1,0 +1,6 @@
+1:"$Sreact.fragment"
+2:I[97367,["/body-comp/_next/static/chunks/ff1a16fafef87110.js","/body-comp/_next/static/chunks/a2dfb6fc5208ab9b.js"],"ViewportBoundary"]
+3:I[97367,["/body-comp/_next/static/chunks/ff1a16fafef87110.js","/body-comp/_next/static/chunks/a2dfb6fc5208ab9b.js"],"MetadataBoundary"]
+4:"$Sreact.suspense"
+5:I[27201,["/body-comp/_next/static/chunks/ff1a16fafef87110.js","/body-comp/_next/static/chunks/a2dfb6fc5208ab9b.js"],"IconMark"]
+0:{"buildId":"Gka__q9aGIJwbZzTirK5W","rsc":["$","$1","h",{"children":[["$","meta",null,{"name":"robots","content":"noindex"}],["$","$L2",null,{"children":[["$","meta","0",{"charSet":"utf-8"}],["$","meta","1",{"name":"viewport","content":"width=device-width, initial-scale=1"}]]}],["$","div",null,{"hidden":true,"children":["$","$L3",null,{"children":["$","$4",null,{"name":"Next.Metadata","children":[["$","title","0",{"children":"BodyComp | Track your progress"}],["$","meta","1",{"name":"description","content":"Track and visualize changes in body weight, skeletal muscle mass, body fat mass, and body fat percentage."}],["$","link","2",{"rel":"shortcut icon","href":"/body-comp/icon.png"}],["$","link","3",{"rel":"icon","href":"/body-comp/icon.png"}],["$","link","4",{"rel":"apple-touch-icon","href":"/body-comp/icon.png"}],["$","$L5","5",{}]]}]}]}],null]}],"loading":null,"isPartial":false}

@@ -1,44 +1,48 @@
 @import "tailwindcss";
 
 :root {
-  /* Dark theme - activity tracker aesthetic */
-  --bg-primary: #121212;
-  --bg-card: #1E1E1E;
-  --bg-elevated: #252525;
-  --bg-modal-overlay: rgba(0, 0, 0, 0.7);
+  /* Gritty athletic aesthetic - warm orange + teal accent + dark charcoal */
+  --bg-primary: #1A282D;
+  --bg-orange: #DA6A2C;
+  --bg-card: rgba(26, 40, 45, 0.92);
+  --bg-elevated: rgba(32, 48, 54, 0.95);
+  --bg-modal-overlay: rgba(0, 0, 0, 0.75);
 
-  /* Glass - dark translucent */
-  --glass-bg: rgba(37, 37, 37, 0.8);
-  --glass-bg-elevated: rgba(45, 45, 45, 0.9);
-  --glass-border: rgba(255, 255, 255, 0.08);
-  --glass-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
+  /* Glass - dark translucent charcoal */
+  --glass-bg: rgba(26, 40, 45, 0.85);
+  --glass-bg-elevated: rgba(32, 48, 54, 0.95);
+  --glass-border: rgba(255, 255, 255, 0.1);
+  --glass-shadow: 0 8px 32px rgba(0, 0, 0, 0.5);
   --glass-blur: 24px;
-  --glass-active-bg: #2D2D2D;
+  --glass-active-bg: rgba(0, 178, 178, 0.15);
   
-  /* Text - white on dark */
+  /* Text - crisp white on dark */
   --text-primary: #FFFFFF;
-  --text-secondary: #A0A0A0;
-  --text-muted: #6B6B6B;
-  --text-metric-label: #A0A0A0;
+  --text-secondary: #B8C4C8;
+  --text-muted: #6B7F86;
+  --text-metric-label: #A0B0B6;
   
-  /* Vibrant accent colors */
-  --color-weight: #FFD60A;
-  --color-muscle: #A855F7;
-  --color-fat-mass: #40E0D0;
+  /* Accent - teal (cool contrast to warm orange) */
+  --color-accent: #00B2B2;
+  --color-accent-dim: rgba(0, 178, 178, 0.25);
+  --color-weight: #FFB347;
+  --color-muscle: #00B2B2;
+  --color-fat-mass: #00D4AA;
   --color-fat-percent: #5DD39E;
   
-  /* Chart colors - purple, yellow, teal */
-  --chart-weight: #FFD60A;
-  --chart-muscle: #A855F7;
-  --chart-fat-mass: #40E0D0;
+  /* Chart colors - orange, teal, mint palette */
+  --chart-weight: #FFB347;
+  --chart-muscle: #00B2B2;
+  --chart-fat-mass: #00D4AA;
   --chart-fat-percent: #5DD39E;
   
   /* UI colors */
-  --border-color: rgba(255, 255, 255, 0.1);
-  --shadow-card: 0 4px 24px rgba(0, 0, 0, 0.3);
+  --border-color: rgba(255, 255, 255, 0.12);
+  --shadow-card: 0 4px 24px rgba(0, 0, 0, 0.4);
+  --shadow-accent: 0 4px 24px rgba(0, 178, 178, 0.3);
   
   /* Delta colors */
-  --delta-positive: #5DD39E;
+  --delta-positive: #00D4AA;
   --delta-negative: #FF6B6B;
   
   /* Border radii */
@@ -67,13 +71,46 @@
   --color-foreground: var(--text-primary);
 }
 
+/* Gritty blurred background - warm orange base with motion-blur aesthetic */
 body {
-  background: var(--bg-primary);
   color: var(--text-primary);
   font-family: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, 'Noto Sans', sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  position: relative;
+  min-height: 100vh;
+  background: linear-gradient(
+    135deg,
+    #DA6A2C 0%,
+    #C85A2A 25%,
+    #1A282D 50%,
+    #152228 75%,
+    #0F1A1E 100%
+  );
+  background-attachment: fixed;
 }
+
+/* Blurred ambient shapes - motion blur effect */
+body::after {
+  content: "";
+  position: fixed;
+  inset: -20%;
+  background: radial-gradient(
+    ellipse 80% 50% at 20% 20%,
+    rgba(0, 178, 178, 0.15) 0%,
+    transparent 50%
+  ),
+  radial-gradient(
+    ellipse 60% 80% at 80% 80%,
+    rgba(218, 106, 44, 0.2) 0%,
+    transparent 50%
+  );
+  filter: blur(60px);
+  pointer-events: none;
+  z-index: 0;
+}
+
+/* Ensure app content sits above background layers */
 
 /* Custom scrollbar */
 ::-webkit-scrollbar {
@@ -86,12 +123,12 @@ body {
 }
 
 ::-webkit-scrollbar-thumb {
-  background: #404040;
+  background: rgba(0, 178, 178, 0.4);
   border-radius: 3px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: #525252;
+  background: rgba(0, 178, 178, 0.6);
 }
 
 /* Input styling */
@@ -147,6 +184,25 @@ input[type="number"] {
 
 .animate-scale-in {
   animation: scaleIn 0.3s ease-out forwards;
+}
+
+/* Exit animations for modals */
+@keyframes fadeOut {
+  from { opacity: 1; }
+  to { opacity: 0; }
+}
+
+@keyframes scaleOut {
+  from { opacity: 1; transform: scale(1); }
+  to { opacity: 0; transform: scale(0.95); }
+}
+
+.animate-fade-out {
+  animation: fadeOut 0.2s ease-in forwards;
+}
+
+.animate-scale-out {
+  animation: scaleOut 0.2s ease-in forwards;
 }
 
 /* Staggered animation delays */

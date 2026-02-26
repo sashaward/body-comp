@@ -5,6 +5,7 @@
   "scripts": {
     "dev": "next dev",
     "build": "next build",
+    "preview": "npm run build && mkdir -p .preview/body-comp && cp -r out/* .preview/body-comp && npx serve .preview -l 3000",
     "start": "next start",
     "lint": "eslint"
   },
