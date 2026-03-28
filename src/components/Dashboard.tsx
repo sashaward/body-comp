@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useCallback } from "react";
+import { useState, useLayoutEffect, useCallback } from "react";
 import Header from "./Header";
 import MetricCard from "./MetricCard";
 import BiometricChart from "./BiometricChart";
@@ -36,12 +36,14 @@ export default function Dashboard() {
   };
 
   const fetchEntries = useCallback(() => {
-    const data = getEntries();
-    setEntries(data);
-    setIsLoading(false);
+    try {
+      setEntries(getEntries());
+    } finally {
+      setIsLoading(false);
+    }
   }, []);
 
-  useEffect(() => {
+  useLayoutEffect(() => {
     fetchEntries();
   }, [fetchEntries]);
 
@@ -78,7 +80,7 @@ export default function Dashboard() {
     const url = URL.createObjectURL(blob);
     const a = document.createElement("a");
     a.href = url;
-    a.download = `body-comp-export-${new Date().toISOString().slice(0, 10)}.csv`;
+    a.download = `track-export-${new Date().toISOString().slice(0, 10)}.csv`;
     a.click();
     URL.revokeObjectURL(url);
   };
@@ -134,7 +136,7 @@ export default function Dashboard() {
   if (isLoading) {
     return (
       <div className="min-h-screen flex items-center justify-center">
-        <div className="w-8 h-8 border-2 border-[var(--color-accent)] border-t-transparent rounded-full animate-spin" />
+        <div className="w-8 h-8 border-2 border-white/30 border-t-white rounded-full animate-spin" />
       </div>
     );
   }
@@ -143,8 +145,8 @@ export default function Dashboard() {
     <div className="min-h-screen pt-10 pb-4 px-4 sm:pt-12 sm:pb-6 sm:px-6">
       <div className="max-w-6xl mx-auto space-y-4">
         {/* Main content container */}
-        <div className="rounded-[var(--radius-card)] p-6 sm:p-8 space-y-6 opacity-0 animate-fade-in glass border border-white/[0.08] shadow-[var(--shadow-card)]">
-          <Header onLogWeighIn={() => setIsModalOpen(true)} />
+        <div className="rounded-[var(--radius-card)] p-6 sm:p-8 space-y-6 opacity-0 animate-fade-in glass border border-white/[0.08] shadow-[var(--shadow-card)] ring-1 ring-white/[0.04]">
+          <Header onLogWeighIn={() => setIsModalOpen(true)} latestDate={latest?.date} />
           {/* Metric Cards - tap to toggle visibility on graph */}
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
             <div className="stagger-1">

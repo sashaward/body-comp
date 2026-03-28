@@ -29,13 +29,13 @@ const metrics: Record<
   MetricKey,
   { label: string; color: string; unit: string }
 > = {
-  weight: { label: "Weight", color: "#FFB347", unit: "kg" },
-  muscle: { label: "Skeletal muscle", color: "#00B2B2", unit: "kg" },
-  fatMass: { label: "Body fat mass", color: "#00D4AA", unit: "kg" },
-  fatPercent: { label: "Body fat %", color: "#5DD39E", unit: "%" },
+  weight: { label: "Weight", color: "#f5f5f5", unit: "kg" },
+  muscle: { label: "Skeletal muscle", color: "#a3a3a3", unit: "kg" },
+  fatMass: { label: "Body fat mass", color: "#737373", unit: "kg" },
+  fatPercent: { label: "Body fat %", color: "#d4d4d4", unit: "%" },
 };
 
-const otherMassColor = "#6B7F86";
+const otherMassColor = "#525252";
 
 // Custom dot with no border (overrides Line's strokeDasharray inheritance)
 const SolidDot = (props: React.SVGProps<SVGCircleElement>) => {
@@ -273,7 +273,7 @@ export default function BiometricChart({
       {/* Header */}
       <div className="flex flex-col sm:flex-row items-start sm:justify-between gap-5 mt-12 mb-8">
         <div>
-          <h2 className="text-lg font-semibold text-[var(--text-primary)]">
+          <h2 className="text-lg font-semibold tracking-tight text-[var(--text-primary)]">
             Progress
           </h2>
         </div>
@@ -286,10 +286,10 @@ export default function BiometricChart({
             <button
               key={range}
               onClick={() => handleTimeRangeClick(range)}
-              className={`w-14 min-w-14 py-2.5 rounded-full text-xs font-bold transition-all text-center ${
+              className={`w-14 min-w-14 py-2.5 rounded-full text-xs font-bold transition-all text-center border ${
                 isSelected
-                  ? "bg-[var(--glass-active-bg)] text-[var(--color-accent)] border border-[var(--color-accent)]/40 shadow-[0_2px_12px_rgba(0,178,178,0.15)]"
-                  : "bg-transparent text-[var(--text-secondary)] hover:bg-white/5 hover:border hover:border-white/5"
+                  ? "bg-[var(--glass-active-bg)] text-[var(--text-primary)] border-white/35 shadow-[0_2px_20px_rgba(0,0,0,0.5)]"
+                  : "bg-transparent text-[var(--text-secondary)] border-transparent hover:bg-white/[0.04] hover:border-white/10"
               }`}
             >
               {timeRanges[range].label}
@@ -318,20 +318,20 @@ export default function BiometricChart({
             >
               <CartesianGrid
                 strokeDasharray="4 14"
-                stroke="rgba(255,255,255,0.08)"
+                stroke="rgba(255,255,255,0.06)"
                 strokeLinecap="round"
                 vertical={false}
               />
               <XAxis
                 dataKey="formattedDate"
-                tick={{ fontSize: 11, fill: "#A0B0B6" }}
+                tick={{ fontSize: 11, fill: "#737373" }}
                 tickLine={false}
                 axisLine={{ stroke: "transparent", strokeWidth: 0 }}
                 dy={10}
               />
               <YAxis
                 yAxisId="left"
-                tick={{ fontSize: 11, fill: "#A0B0B6" }}
+                tick={{ fontSize: 11, fill: "#737373" }}
                 tickLine={false}
                 axisLine={false}
                 domain={[0, 'auto']}
@@ -339,7 +339,7 @@ export default function BiometricChart({
                   value: 'kg', 
                   angle: -90, 
                   position: 'insideLeft',
-                  style: { fontSize: 11, fill: '#A0B0B6' }
+                  style: { fontSize: 11, fill: '#737373' }
                 }}
               />
               {showFatPercentLine && (
@@ -359,7 +359,12 @@ export default function BiometricChart({
                   }}
                 />
               )}
-              <Tooltip content={<CustomTooltip />} />
+              <Tooltip
+                content={<CustomTooltip />}
+                cursor={{ stroke: "rgba(255,255,255,0.15)", strokeWidth: 1 }}
+                wrapperStyle={{ zIndex: 50 }}
+                allowEscapeViewBox={{ x: true, y: true }}
+              />
 
               {/* Stacked bars: fat/muscle-only = as proportion of total weight; composition = muscle + fat + other */}
               {showBars && (
@@ -374,7 +379,7 @@ export default function BiometricChart({
                     <Bar
                       yAxisId="left"
                       dataKey="nonMuscle"
-                      fill="rgba(255,255,255,0.06)"
+                      fill="rgba(255,255,255,0.04)"
                       tooltipType="none"
                       isAnimationActive={false}
                     />
@@ -390,7 +395,7 @@ export default function BiometricChart({
                     <Bar
                       yAxisId="left"
                       dataKey="nonFat"
-                      fill="rgba(255,255,255,0.06)"
+                      fill="rgba(255,255,255,0.04)"
                       tooltipType="none"
                       isAnimationActive={false}
                     />
@@ -434,8 +439,8 @@ export default function BiometricChart({
                   strokeWidth={2.5}
                   animationDuration={1600}
                   animationEasing={"cubic-bezier(0.25, 1, 0.5, 1)" as "ease"}
-                  dot={{ fill: metrics.weight.color, r: 4, strokeWidth: 2, stroke: "#1A282D" }}
-                  activeDot={{ r: 6, strokeWidth: 2, stroke: "#1A282D" }}
+                  dot={{ fill: metrics.weight.color, r: 4, strokeWidth: 2, stroke: "#050505" }}
+                  activeDot={{ r: 6, strokeWidth: 2, stroke: "#050505" }}
                 />
               )}
 
@@ -474,20 +479,20 @@ export default function BiometricChart({
               >
                 <CartesianGrid
                   strokeDasharray="4 14"
-                  stroke="rgba(255,255,255,0.08)"
+                  stroke="rgba(255,255,255,0.06)"
                   strokeLinecap="round"
                   vertical={false}
                 />
                 <XAxis
                   dataKey="formattedDate"
-                  tick={{ fontSize: 11, fill: "#A0B0B6" }}
+                  tick={{ fontSize: 11, fill: "#737373" }}
                   tickLine={false}
                   axisLine={{ stroke: "transparent", strokeWidth: 0 }}
                   dy={10}
                 />
                 <YAxis
                   yAxisId="left"
-                  tick={{ fontSize: 11, fill: "#A0B0B6" }}
+                  tick={{ fontSize: 11, fill: "#737373" }}
                   tickLine={false}
                   axisLine={false}
                   domain={[0, "auto"]}
@@ -533,7 +538,7 @@ export default function BiometricChart({
           <div className="relative flex items-center justify-center h-full">
             <div className="text-center glass rounded-[var(--radius-metric)] px-10 py-12 border border-white/[0.1] max-w-sm shadow-[var(--glass-shadow)]">
               <h3 className="text-lg font-semibold text-[var(--text-primary)]">
-                Track your body composition
+                Track your body composition over time
               </h3>
               <p className="text-[var(--text-secondary)] text-sm mt-3 leading-relaxed">
                 Log weight, muscle mass, and body fat over time. See how your composition changes—not just the number on the scale.
@@ -541,7 +546,7 @@ export default function BiometricChart({
               {onLogWeighIn && (
                 <button
                   onClick={onLogWeighIn}
-                  className="mt-8 flex items-center gap-2 bg-[var(--color-accent)] text-[#0F1A1E] px-6 py-3 rounded-[var(--radius-button)] font-semibold text-sm hover:brightness-110 transition-all shadow-[var(--shadow-accent)] mx-auto"
+                  className="mt-8 flex items-center gap-2 btn-primary px-6 py-3 rounded-[var(--radius-button)] font-semibold text-sm transition-all mx-auto"
                 >
                   Add your first weigh-in
                 </button>

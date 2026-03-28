@@ -84,7 +84,7 @@ export default function WeighInModal({ isOpen, onClose, onSave }: WeighInModalPr
           </p>
 
           {error && (
-            <div className="mb-5 p-4 bg-[var(--glass-active-bg)] border border-[var(--delta-negative)]/30 rounded-[var(--radius-button)] text-sm text-[var(--delta-negative)] font-normal">
+            <div className="mb-5 p-4 bg-white/[0.04] border border-white/20 rounded-[var(--radius-button)] text-sm text-[var(--text-secondary)] font-normal">
               {error}
             </div>
           )}
@@ -102,7 +102,7 @@ export default function WeighInModal({ isOpen, onClose, onSave }: WeighInModalPr
                     type="date"
                     value={date}
                     onChange={(e) => setDate(e.target.value)}
-                    className="w-full pl-10 pr-4 py-3 bg-[var(--glass-active-bg)] border border-white/10 rounded-[var(--radius-metric)] text-[var(--text-primary)] focus:outline-none focus:ring-2 focus:ring-[var(--color-accent)]/50 focus:border-[var(--color-accent)]/50 transition-all"
+                    className="w-full pl-10 pr-4 py-3 bg-[var(--glass-active-bg)] border border-white/10 rounded-[var(--radius-metric)] text-[var(--text-primary)] focus:outline-none focus:ring-2 focus:ring-white/15 focus:border-white/25 transition-all"
                     required
                   />
                 </div>
@@ -122,7 +122,7 @@ export default function WeighInModal({ isOpen, onClose, onSave }: WeighInModalPr
                     value={bodyWeight}
                     onChange={(e) => setBodyWeight(e.target.value)}
                     placeholder="0.0"
-                    className="w-full px-4 py-3 bg-[var(--glass-active-bg)] border border-white/10 rounded-[var(--radius-metric)] text-[var(--text-primary)] placeholder:text-[var(--text-muted)] focus:outline-none focus:ring-2 focus:ring-[var(--color-accent)]/50 focus:border-[var(--color-accent)]/50 transition-all tabular-nums"
+                    className="w-full px-4 py-3 bg-[var(--glass-active-bg)] border border-white/10 rounded-[var(--radius-metric)] text-[var(--text-primary)] placeholder:text-[var(--text-muted)] focus:outline-none focus:ring-2 focus:ring-white/15 focus:border-white/25 transition-all tabular-nums"
                     required
                   />
                 </div>
@@ -139,7 +139,7 @@ export default function WeighInModal({ isOpen, onClose, onSave }: WeighInModalPr
                     value={skeletalMuscleMass}
                     onChange={(e) => setSkeletalMuscleMass(e.target.value)}
                     placeholder="0.0"
-                    className="w-full px-4 py-3 bg-[var(--glass-active-bg)] border border-white/10 rounded-[var(--radius-metric)] text-[var(--text-primary)] placeholder:text-[var(--text-muted)] focus:outline-none focus:ring-2 focus:ring-[var(--color-accent)]/50 focus:border-[var(--color-accent)]/50 transition-all tabular-nums"
+                    className="w-full px-4 py-3 bg-[var(--glass-active-bg)] border border-white/10 rounded-[var(--radius-metric)] text-[var(--text-primary)] placeholder:text-[var(--text-muted)] focus:outline-none focus:ring-2 focus:ring-white/15 focus:border-white/25 transition-all tabular-nums"
                     required
                   />
                 </div>
@@ -156,7 +156,7 @@ export default function WeighInModal({ isOpen, onClose, onSave }: WeighInModalPr
                     value={bodyFatMass}
                     onChange={(e) => setBodyFatMass(e.target.value)}
                     placeholder="0.0"
-                    className="w-full px-4 py-3 bg-[var(--glass-active-bg)] border border-white/10 rounded-[var(--radius-metric)] text-[var(--text-primary)] placeholder:text-[var(--text-muted)] focus:outline-none focus:ring-2 focus:ring-[var(--color-accent)]/50 focus:border-[var(--color-accent)]/50 transition-all tabular-nums"
+                    className="w-full px-4 py-3 bg-[var(--glass-active-bg)] border border-white/10 rounded-[var(--radius-metric)] text-[var(--text-primary)] placeholder:text-[var(--text-muted)] focus:outline-none focus:ring-2 focus:ring-white/15 focus:border-white/25 transition-all tabular-nums"
                     required
                   />
                 </div>
@@ -173,7 +173,7 @@ export default function WeighInModal({ isOpen, onClose, onSave }: WeighInModalPr
                     value={bodyFatPercentage}
                     onChange={(e) => setBodyFatPercentage(e.target.value)}
                     placeholder="0.0"
-                    className="w-full px-4 py-3 bg-[var(--glass-active-bg)] border border-white/10 rounded-[var(--radius-metric)] text-[var(--text-primary)] placeholder:text-[var(--text-muted)] focus:outline-none focus:ring-2 focus:ring-[var(--color-accent)]/50 focus:border-[var(--color-accent)]/50 transition-all tabular-nums"
+                    className="w-full px-4 py-3 bg-[var(--glass-active-bg)] border border-white/10 rounded-[var(--radius-metric)] text-[var(--text-primary)] placeholder:text-[var(--text-muted)] focus:outline-none focus:ring-2 focus:ring-white/15 focus:border-white/25 transition-all tabular-nums"
                     required
                   />
                 </div>
@@ -183,7 +183,7 @@ export default function WeighInModal({ isOpen, onClose, onSave }: WeighInModalPr
             <button
               type="submit"
               disabled={!isValid || isLoading}
-              className="w-full mt-8 flex items-center justify-center gap-2 bg-[var(--color-accent)] text-[#0F1A1E] px-6 py-4 rounded-[var(--radius-button)] font-semibold text-sm hover:brightness-110 disabled:opacity-50 disabled:brightness-100 disabled:cursor-not-allowed transition-all shadow-[var(--shadow-accent)]"
+              className="w-full mt-8 flex items-center justify-center gap-2 btn-primary px-6 py-4 rounded-[var(--radius-button)] font-semibold text-sm disabled:cursor-not-allowed transition-all"
             >
               <span>{isLoading ? "Saving..." : "Complete entry"}</span>
             </button>

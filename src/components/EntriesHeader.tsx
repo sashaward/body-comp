@@ -18,7 +18,7 @@ export default function EntriesHeader({ onClearAll, hasEntries }: EntriesHeaderP
         <ChevronLeftIcon className="w-5 h-5" />
         <span className="text-sm font-medium tracking-wider">Back</span>
       </Link>
-      <h1 className="text-lg font-semibold text-[var(--text-primary)]">
+      <h1 className="text-lg font-semibold tracking-tight text-[var(--text-primary)]">
         All entries
       </h1>
       {hasEntries && onClearAll ? (

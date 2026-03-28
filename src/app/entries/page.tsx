@@ -163,14 +163,14 @@ export default function EntriesPage() {
   return (
     <div className="min-h-screen p-6 sm:p-10">
       <div className="max-w-2xl mx-auto">
-        <div className="rounded-[var(--radius-card)] p-8 sm:p-10 space-y-8 opacity-0 animate-fade-in glass border border-white/[0.08] shadow-[var(--shadow-card)]">
+        <div className="rounded-[var(--radius-card)] p-8 sm:p-10 space-y-8 opacity-0 animate-fade-in glass border border-white/[0.08] shadow-[var(--shadow-card)] ring-1 ring-white/[0.04]">
           <EntriesHeader
             onClearAll={handleClearAllClick}
             hasEntries={entries.length > 0}
           />
 
           {error && (
-            <div className="p-4 bg-[var(--glass-active-bg)] border border-[var(--delta-negative)]/30 rounded-[var(--radius-button)] text-sm text-[var(--delta-negative)]">
+            <div className="p-4 bg-white/[0.04] border border-white/20 rounded-[var(--radius-button)] text-sm text-[var(--text-secondary)]">
               {error}
             </div>
           )}
@@ -302,7 +302,7 @@ export default function EntriesPage() {
                     <button
                       onClick={() => handleSave(entry.id)}
                       disabled={savingId === entry.id}
-                      className="flex items-center gap-2 bg-[var(--color-accent)] text-[#0F1A1E] px-5 py-3 rounded-[var(--radius-button)] font-semibold text-sm hover:brightness-110 disabled:opacity-50 transition-all shadow-[var(--shadow-accent)]"
+                      className="flex items-center gap-2 btn-primary px-5 py-3 rounded-[var(--radius-button)] font-semibold text-sm transition-all"
                     >
                       {savingId === entry.id ? "Saving..." : "Save"}
                     </button>
@@ -319,12 +319,12 @@ export default function EntriesPage() {
                 No entries yet
               </p>
               <p className="text-[var(--text-secondary)] text-sm mt-2">
-                Track your body composition from the dashboard — add your first weigh-in to get started.
+                Add your first weigh-in from the dashboard to get started.
               </p>
               <button
                 type="button"
                 onClick={() => setIsWeighInModalOpen(true)}
-                className="inline-flex items-center gap-2 mt-6 bg-[var(--color-accent)] text-[#0F1A1E] px-5 py-2.5 rounded-[var(--radius-button)] font-semibold text-sm hover:brightness-110 transition-all shadow-[var(--shadow-accent)]"
+                className="inline-flex items-center gap-2 mt-6 btn-primary px-5 py-2.5 rounded-[var(--radius-button)] font-semibold text-sm transition-all"
               >
                 Add first weigh-in
               </button>

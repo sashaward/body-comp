@@ -45,7 +45,7 @@ export default function ConfirmModal({
             <button
               type="button"
               onClick={() => handleConfirm(requestClose)}
-              className="px-4 py-2.5 rounded-[var(--radius-button)] font-semibold text-sm bg-[var(--delta-negative)] text-white hover:brightness-110 transition-all border border-[var(--delta-negative)]/30"
+              className="px-4 py-2.5 rounded-[var(--radius-button)] font-semibold text-sm border border-white/35 text-[var(--text-primary)] hover:bg-white hover:text-[var(--color-on-accent)] transition-colors"
             >
               {confirmLabel}
             </button>

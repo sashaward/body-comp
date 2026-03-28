@@ -18,10 +18,10 @@ interface MetricCardProps {
 }
 
 const colorConfig: Record<string, { inner: string; outer: string }> = {
-  weight: { inner: "#FFB347", outer: "rgba(255, 179, 71, 0.3)" },
-  muscle: { inner: "#00B2B2", outer: "rgba(0, 178, 178, 0.3)" },
-  fatMass: { inner: "#00D4AA", outer: "rgba(0, 212, 170, 0.3)" },
-  fatPercent: { inner: "#5DD39E", outer: "rgba(93, 211, 158, 0.3)" },
+  weight: { inner: "#f5f5f5", outer: "rgba(245, 245, 245, 0.25)" },
+  muscle: { inner: "#a3a3a3", outer: "rgba(163, 163, 163, 0.25)" },
+  fatMass: { inner: "#737373", outer: "rgba(115, 115, 115, 0.25)" },
+  fatPercent: { inner: "#d4d4d4", outer: "rgba(212, 212, 212, 0.25)" },
 };
 
 export default function MetricCard({
@@ -52,8 +52,10 @@ export default function MetricCard({
         ? isPositive
         : isNegative;
 
-  const pillGood = "bg-[var(--glass-active-bg)] text-[var(--delta-positive)] border border-[var(--delta-positive)]/30";
-  const pillBad = "bg-[var(--glass-active-bg)] text-[var(--delta-negative)] border border-[var(--delta-negative)]/30";
+  const pillGood =
+    "bg-[var(--glass-active-bg)] text-[var(--delta-positive)] border border-white/20";
+  const pillBad =
+    "bg-[var(--glass-active-bg)] text-[var(--delta-negative)] border border-white/[0.08]";
 
   const formatDelta = (d: number, u: string) => {
     const sign = d > 0 ? "+" : "";
@@ -67,12 +69,10 @@ export default function MetricCard({
     <button
       type="button"
       onClick={onToggle}
-      className={`w-full text-left rounded-[var(--radius-metric)] p-6 flex flex-col justify-between min-h-[150px] opacity-0 animate-slide-up transition-all duration-300 ease-out cursor-pointer overflow-hidden hover:scale-[1.02] active:scale-[0.98] ${
+      className={`w-full text-left rounded-[var(--radius-metric)] p-6 flex flex-col justify-between min-h-[150px] opacity-0 animate-slide-up transition-all duration-300 ease-out cursor-pointer overflow-hidden active:scale-[0.98] ${
         isActive
-          ? isSoleActive
-            ? "bg-[var(--bg-elevated)] border border-white/[0.12]"
-            : "bg-[var(--bg-elevated)] border border-white/[0.08]"
-          : "bg-[var(--glass-bg)] backdrop-blur-[20px] border border-white/[0.06] opacity-70 hover:opacity-95 hover:bg-[var(--glass-bg-elevated)]"
+          ? "bg-[var(--bg-elevated)] border border-white hover:bg-white/[0.12] hover:scale-[1.02]"
+          : "bg-[var(--glass-bg)] backdrop-blur-[20px] border border-white/[0.06] opacity-70 hover:opacity-95 hover:bg-[var(--glass-bg-elevated)] hover:scale-[1.02]"
       }`}
       style={
         isActive && isSoleActive
@@ -97,7 +97,7 @@ export default function MetricCard({
           <div
             className="w-2 h-2 rounded-full transition-colors duration-300"
             style={{
-              backgroundColor: isActive ? inner : "#6B7F86",
+              backgroundColor: isActive ? inner : "#525252",
             }}
           />
         </div>

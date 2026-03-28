@@ -1,8 +1,10 @@
 import type { NextConfig } from "next";
 
-// For GitHub project pages: username.github.io/body-comp
-// Use "" for custom domain or user site
-const basePath = process.env.BASE_PATH ?? "/body-comp";
+// GitHub Pages uses /body-comp; local `next dev` uses "" so http://localhost:3000/ works.
+// Override anytime: BASE_PATH=/body-comp npm run dev
+const basePath =
+  process.env.BASE_PATH ??
+  (process.env.NODE_ENV === "development" ? "" : "/body-comp");
 
 const nextConfig: NextConfig = {
   output: "export",

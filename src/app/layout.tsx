@@ -1,16 +1,17 @@
 import type { Metadata } from "next";
-import { basePath } from "@/lib/config";
+import { Inter } from "next/font/google";
 import "./globals.css";
 import PageTransition from "@/components/PageTransition";
 
+const inter = Inter({
+  subsets: ["latin"],
+  display: "swap",
+  variable: "--font-inter",
+});
+
 export const metadata: Metadata = {
-  title: "BodyComp | Track your progress",
+  title: "Track | Your body composition",
   description: "Track and visualize changes in body weight, skeletal muscle mass, body fat mass, and body fat percentage.",
-  icons: {
-    icon: `${basePath}/icon.png`,
-    shortcut: `${basePath}/icon.png`,
-    apple: `${basePath}/icon.png`,
-  },
 };
 
 export default function RootLayout({
@@ -19,16 +20,8 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
-      <head>
-        <link rel="preconnect" href="https://fonts.googleapis.com" />
-        <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
-        <link
-          href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap"
-          rel="stylesheet"
-        />
-      </head>
-      <body className="antialiased min-h-screen">
+    <html lang="en" className={inter.variable}>
+      <body className={`${inter.className} antialiased min-h-screen`}>
         <div className="relative z-10 min-h-screen">
           <PageTransition>{children}</PageTransition>
         </div>
