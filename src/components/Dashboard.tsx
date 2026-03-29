@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useLayoutEffect, useCallback } from "react";
+import { useState, useEffect, useCallback } from "react";
 import Header from "./Header";
 import MetricCard from "./MetricCard";
 import BiometricChart from "./BiometricChart";
@@ -43,7 +43,7 @@ export default function Dashboard() {
     }
   }, []);
 
-  useLayoutEffect(() => {
+  useEffect(() => {
     fetchEntries();
   }, [fetchEntries]);
 
